@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Usuarios{% endblock %}
+{% block page_title %}Gestión de Usuarios{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-person-plus me-2 text-primary"></i>Nuevo Usuario</h5></div>
+      <div class="panel-body">
+        <form method="post" action="/sistema/usuarios/nuevo">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Nombre *</label>
+            <input type="text" name="nombre" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Apellido *</label>
+            <input type="text" name="apellido" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Email *</label>
+            <input type="email" name="email" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Usuario *</label>
+            <input type="text" name="username" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Contraseña *</label>
+            <input type="password" name="password" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Rol *</label>
+            <select name="rol" class="form-select" required>
+              <option value="ventas">Ventas</option>
+              <option value="compras">Compras</option>
+              <option value="finanzas">Finanzas</option>
+              <option value="sistema">Sistema</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Sucursal</label>
+            <select name="sucursal_id" class="form-select">
+              <option value="">Sin sucursal asignada</option>
+              {% for s in sucursales %}<option value="{{ s.id }}">{{ s.nombre }}</option>{% endfor %}
+            </select>
+          </div>
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-plus me-1"></i>Crear Usuario</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-people me-2"></i>Usuarios del sistema</h5></div>
+      <div class="kawa-table">
+        <table class="table">
+          <thead><tr><th>#</th><th>Nombre</th><th>Usuario</th><th>Rol</th><th>Sucursal</th><th>Estado</th><th></th></tr></thead>
+          <tbody>
+            {% for u in usuarios %}
+            <tr>
+              <td>{{ u.id }}</td>
+              <td class="fw-semibold">{{ u.nombre }} {{ u.apellido }}</td>
+              <td><code>{{ u.username }}</code></td>
+              <td>
+                {% set rol_colors = {'ventas':'danger','compras':'primary','finanzas':'purple','sistema':'dark'} %}
+                <span class="badge bg-{{ rol_colors.get(u.rol,'secondary') }}">{{ u.rol | capitalize }}</span>
+              </td>
+              <td><small>{{ u.sucursal.nombre if u.sucursal else '-' }}</small></td>
+              <td>{% if u.activo %}<span class="badge-estado badge-aprobada">Activo</span>{% else %}<span class="badge-estado badge-rechazada">Inactivo</span>{% endif %}</td>
+              <td>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editUser{{ u.id }}">
+                  <i class="bi bi-pencil"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for u in usuarios %}
+<div class="modal fade" id="editUser{{ u.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Editar usuario: {{ u.username }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <form method="post" action="/sistema/usuarios/{{ u.id }}/editar">
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-6"><label class="form-label small fw-semibold">Nombre</label><input type="text" name="nombre" class="form-control" value="{{ u.nombre }}" required/></div>
+            <div class="col-6"><label class="form-label small fw-semibold">Apellido</label><input type="text" name="apellido" class="form-control" value="{{ u.apellido }}" required/></div>
+            <div class="col-12"><label class="form-label small fw-semibold">Email</label><input type="email" name="email" class="form-control" value="{{ u.email }}" required/></div>
+            <div class="col-6"><label class="form-label small fw-semibold">Rol</label>
+              <select name="rol" class="form-select">
+                <option value="ventas" {% if u.rol=='ventas' %}selected{% endif %}>Ventas</option>
+                <option value="compras" {% if u.rol=='compras' %}selected{% endif %}>Compras</option>
+                <option value="finanzas" {% if u.rol=='finanzas' %}selected{% endif %}>Finanzas</option>
+                <option value="sistema" {% if u.rol=='sistema' %}selected{% endif %}>Sistema</option>
+              </select>
+            </div>
+            <div class="col-6"><label class="form-label small fw-semibold">Sucursal</label>
+              <select name="sucursal_id" class="form-select">
+                <option value="">Sin sucursal</option>
+                {% for s in sucursales %}<option value="{{ s.id }}" {% if u.sucursal_id==s.id %}selected{% endif %}>{{ s.nombre }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-12">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" name="activo" id="activo{{ u.id }}" {% if u.activo %}checked{% endif %}>
+                <label class="form-check-label small fw-semibold" for="activo{{ u.id }}">Usuario activo</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-kawa">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

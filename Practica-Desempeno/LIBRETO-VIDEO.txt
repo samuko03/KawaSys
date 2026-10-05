@@ -1,0 +1,55 @@
+============================================================
+   LIBRETO VIDEO - DESEMPENO REDES - SAMMY GARCIA
+   FORMATO: primero la ACCION [corchetes], luego lo que DECIS ("comillas")
+   Maximo 2 minutos - Una sola toma - Sin editar - .mp4
+============================================================
+
+[ Apretar REC en la pantalla de login. Mandar Ctrl+Alt+Supr
+  (menu Entrada -> Teclado -> Insertar Ctrl-Alt-Supr) ]
+   "Hola, mi nombre es Sammy Garcia y voy a presentar mi laboratorio
+    de redes en Windows Server 2022."
+
+[ Mostrar el banner que aparece con tu nombre ]
+   "Como ven, al iniciar sesion aparece el banner de mi GPO con mi
+    nombre. Acepto e ingreso."
+
+[ Escribir la contrasena (Samuel030405) e iniciar sesion.
+  Abrir PowerShell y escribir:  hostname   (Enter)   whoami  (Enter) ]
+   "Confirmo mi identidad: el equipo se llama SRV-SammyGarcia y estoy
+    logueado en mi dominio."
+
+[ Escribir:  Get-ADDomain  (Enter) ]
+   "Tengo Active Directory configurado. Mi dominio es sammygarcia.local
+    y este equipo es el controlador de dominio."
+
+[ Escribir:  nslookup sammygarcia.local  (Enter) ]
+   "El servicio DNS resuelve correctamente: el dominio apunta a la
+    IP 192.168.10.10."
+
+[ Abrir Edge en  http://localhost ]
+   "Como segundo servicio tengo IIS, el servidor web. Aca esta mi
+    pagina publicada con mi nombre."
+
+[ En Edge escribir  ftp://localhost  y hacer clic en bienvenida.txt ]
+   "Tambien configure un servidor FTP. Me conecto con el usuario del
+    dominio ftpalumno y accedo a mi archivo."
+
+[ Abrir Server Manager -> Tools -> Group Policy Management ->
+  pestana 'Linked Group Policy Objects' ]
+   "Aca esta mi GPO, GPO-Banner-SammyGarcia, enlazada a mi dominio
+    y habilitada."
+
+[ Volver a PowerShell y escribir:
+  C:\Users\Administrator\Desktop\demo-video.ps1   (Enter) ]
+   "Por ultimo, este resumen confirma que Active Directory, DNS, IIS,
+    FTP y la GPO estan operativos, con conectividad por ping.
+    Soy Sammy Garcia, muchas gracias."
+
+[ Cortar la grabacion ]
+
+============================================================
+ DATOS UTILES
+   Login Windows : Administrator / Samuel030405
+   FTP           : ftpalumno / Ftp.2024Segura
+   Dominio       : sammygarcia.local  (IP 192.168.10.10)
+============================================================

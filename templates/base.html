@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>KawaSys - {% block title %}{% endblock %}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link href="/static/css/kawasys.css" rel="stylesheet"/>
+</head>
+<body>
+
+<div id="sidebar">
+  <div class="brand">
+    <img src="/static/img/logo.png" alt="KawaSys"/>
+    <span>SISTEMA DE GESTIÓN</span>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Principal</div>
+    <a href="/dashboard" class="nav-link {% if request.url.path == '/dashboard' %}active{% endif %}">
+      <i class="bi bi-speedometer2"></i><span>Dashboard</span>
+    </a>
+  </div>
+
+  {% if user.rol in ['ventas', 'sistema'] %}
+  <div class="nav-section">
+    <div class="nav-label">Ventas</div>
+    <a href="/ventas/" class="nav-link {% if '/ventas/' in request.url.path and 'faltantes' not in request.url.path and 'pedidos' not in request.url.path and 'envios' not in request.url.path %}active{% endif %}">
+      <i class="bi bi-cart3"></i><span>Ventas</span>
+    </a>
+    <a href="/ventas/faltantes" class="nav-link {% if 'faltantes' in request.url.path %}active{% endif %}">
+      <i class="bi bi-exclamation-circle"></i><span>Faltantes</span>
+    </a>
+    <a href="/ventas/pedidos" class="nav-link {% if 'pedidos' in request.url.path %}active{% endif %}">
+      <i class="bi bi-clipboard-plus"></i><span>Pedidos Cliente</span>
+    </a>
+    <a href="/ventas/envios" class="nav-link {% if 'envios' in request.url.path %}active{% endif %}">
+      <i class="bi bi-send"></i><span>Envíos</span>
+    </a>
+  </div>
+  {% endif %}
+
+  {% if user.rol in ['compras', 'sistema'] %}
+  <div class="nav-section">
+    <div class="nav-label">Compras</div>
+    <a href="/compras/" class="nav-link {% if request.url.path == '/compras/' %}active{% endif %}">
+      <i class="bi bi-bag-check"></i><span>Solicitudes</span>
+    </a>
+    <a href="/compras/cotizaciones" class="nav-link {% if 'cotizaciones' in request.url.path and 'recibidas' not in request.url.path %}active{% endif %}">
+      <i class="bi bi-file-earmark-text"></i><span>Cotizaciones</span>
+    </a>
+    <a href="/compras/cotizaciones-recibidas" class="nav-link {% if 'cotizaciones-recibidas' in request.url.path %}active{% endif %}">
+      <i class="bi bi-inbox"></i><span>Cot. Recibidas</span>
+    </a>
+    <a href="/compras/ordenes" class="nav-link {% if 'ordenes' in request.url.path %}active{% endif %}">
+      <i class="bi bi-journal-check"></i><span>Órdenes</span>
+    </a>
+    <a href="/compras/recepcion" class="nav-link {% if 'recepcion' in request.url.path %}active{% endif %}">
+      <i class="bi bi-truck"></i><span>Recepción</span>
+    </a>
+  </div>
+  {% endif %}
+
+  {% if user.rol in ['compras', 'sistema'] %}
+  <div class="nav-section">
+    <div class="nav-label">Proveedores</div>
+    <a href="/proveedores/" class="nav-link {% if request.url.path == '/proveedores/' %}active{% endif %}">
+      <i class="bi bi-building"></i><span>Proveedores</span>
+    </a>
+    <a href="/proveedores/buscar" class="nav-link {% if 'buscar' in request.url.path %}active{% endif %}">
+      <i class="bi bi-search"></i><span>Buscar</span>
+    </a>
+  </div>
+  {% endif %}
+
+  {% if user.rol in ['finanzas', 'sistema'] %}
+  <div class="nav-section">
+    <div class="nav-label">Finanzas</div>
+    <a href="/finanzas/" class="nav-link {% if request.url.path == '/finanzas/' %}active{% endif %}">
+      <i class="bi bi-check2-circle"></i><span>Aprobaciones</span>
+    </a>
+    <a href="/finanzas/historial" class="nav-link {% if 'historial' in request.url.path %}active{% endif %}">
+      <i class="bi bi-clock-history"></i><span>Historial</span>
+    </a>
+    <a href="/finanzas/reporte-mensual" class="nav-link {% if 'reporte' in request.url.path %}active{% endif %}">
+      <i class="bi bi-bar-chart"></i><span>Reporte Mensual</span>
+    </a>
+  </div>
+  {% endif %}
+
+  {% if user.rol == 'sistema' %}
+  <div class="nav-section">
+    <div class="nav-label">Sistema</div>
+    <a href="/sistema/usuarios" class="nav-link {% if 'usuarios' in request.url.path %}active{% endif %}">
+      <i class="bi bi-people"></i><span>Usuarios</span>
+    </a>
+    <a href="/sucursales/" class="nav-link {% if '/sucursales/' in request.url.path %}active{% endif %}">
+      <i class="bi bi-geo-alt"></i><span>Sucursales</span>
+    </a>
+    <a href="/sistema/clientes" class="nav-link {% if 'clientes' in request.url.path %}active{% endif %}">
+      <i class="bi bi-person-badge"></i><span>Clientes</span>
+    </a>
+  </div>
+  {% else %}
+  <div class="nav-section">
+    <div class="nav-label">Clientes</div>
+    <a href="/sistema/clientes" class="nav-link {% if 'clientes' in request.url.path %}active{% endif %}">
+      <i class="bi bi-person-badge"></i><span>Clientes</span>
+    </a>
+  </div>
+  {% endif %}
+
+  <div class="user-info">
+    <div class="avatar">{{ user.nombre[0] }}{{ user.apellido[0] }}</div>
+    <div>
+      <div class="uname">{{ user.nombre }} {{ user.apellido }}</div>
+      <div class="urole">{{ user.rol | capitalize }}</div>
+    </div>
+  </div>
+</div>
+
+<div id="main">
+  <div class="topbar">
+    <h4><i class="bi bi-motorcycle me-2" style="color:#e94560"></i>{% block page_title %}{% endblock %}</h4>
+    <div class="d-flex align-items-center gap-3">
+      {% if user.sucursal %}<span class="badge bg-secondary">{{ user.sucursal.nombre }}</span>{% endif %}
+      <a href="/logout" class="btn btn-sm btn-outline-danger">
+        <i class="bi bi-box-arrow-right"></i> Salir
+      </a>
+    </div>
+  </div>
+
+  <div class="page-body">
+    {% if request.query_params.get('msg') %}
+    <div class="alert kawa-alert alert-success">
+      <i class="bi bi-check-circle me-2"></i>{{ request.query_params.get('msg') | replace('+', ' ') }}
+    </div>
+    {% endif %}
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

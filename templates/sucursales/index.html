@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Sucursales{% endblock %}
+{% block page_title %}Gestión de Sucursales{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-end mb-3">
+  {% if user.rol == 'sistema' %}
+  <a href="/sucursales/nueva" class="btn btn-kawa"><i class="bi bi-plus-lg me-1"></i>Nueva Sucursal</a>
+  {% endif %}
+</div>
+<div class="row g-3">
+  {% for s in sucursales %}
+  <div class="col-md-6 col-lg-4">
+    <div class="panel h-100">
+      <div class="panel-header">
+        <h5 class="mb-0"><i class="bi bi-geo-alt me-2 text-danger"></i>{{ s.nombre }}</h5>
+        {% if s.activa %}<span class="badge-estado badge-aprobada">Activa</span>{% else %}<span class="badge-estado badge-rechazada">Inactiva</span>{% endif %}
+      </div>
+      <div class="panel-body">
+        <div class="mb-2"><i class="bi bi-map me-2 text-muted"></i><small>{{ s.direccion or 'Sin dirección' }}</small></div>
+        <div class="mb-2"><i class="bi bi-building me-2 text-muted"></i><small>{{ s.ciudad or 'Sin ciudad' }}</small></div>
+        <div class="mb-2"><i class="bi bi-telephone me-2 text-muted"></i><small>{{ s.telefono or 'Sin teléfono' }}</small></div>
+        <div class="mb-3"><i class="bi bi-envelope me-2 text-muted"></i><small>{{ s.email or 'Sin email' }}</small></div>
+        {% if user.rol == 'sistema' %}
+        <a href="/sucursales/{{ s.id }}/editar" class="btn btn-sm btn-outline-primary w-100">
+          <i class="bi bi-pencil me-1"></i>Editar
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="col-12"><div class="text-center text-muted py-5">No hay sucursales registradas</div></div>
+  {% endfor %}
+</div>
+{% endblock %}

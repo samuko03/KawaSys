@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Consultar Ventas{% endblock %}
+{% block page_title %}Consultar Ventas por Sucursal{% endblock %}
+{% block content %}
+<div class="panel mb-3">
+  <div class="panel-header"><h5><i class="bi bi-funnel me-2"></i>Filtros</h5></div>
+  <div class="panel-body">
+    <form method="get" action="/ventas/consultar" class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label fw-semibold small">Sucursal</label>
+        <select name="sucursal_id" class="form-select">
+          <option value="">Todas</option>
+          {% for s in sucursales %}<option value="{{ s.id }}" {% if sucursal_id == s.id|string %}selected{% endif %}>{{ s.nombre }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-semibold small">Desde</label>
+        <input type="date" name="fecha_desde" class="form-control" value="{{ fecha_desde }}"/>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-semibold small">Hasta</label>
+        <input type="date" name="fecha_hasta" class="form-control" value="{{ fecha_hasta }}"/>
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-search me-1"></i>Buscar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="panel">
+  <div class="panel-header">
+    <h5><i class="bi bi-table me-2 text-danger"></i>Resultados ({{ ventas|length }})</h5>
+    {% if ventas %}
+    <span class="fw-bold text-danger">Total: ${{ "%.2f"|format(ventas|sum(attribute='total')) }}</span>
+    {% endif %}
+  </div>
+  <div class="kawa-table">
+    <table class="table">
+      <thead><tr><th>#</th><th>Fecha</th><th>Sucursal</th><th>Marca/Modelo</th><th>Cant.</th><th>Total</th><th>Pago</th></tr></thead>
+      <tbody>
+        {% for v in ventas %}
+        <tr>
+          <td class="fw-bold text-danger">#{{ v.id }}</td>
+          <td>{{ v.fecha }}</td>
+          <td>{{ v.sucursal.nombre if v.sucursal else '-' }}</td>
+          <td>{{ v.marca }} {{ v.modelo }}</td>
+          <td>{{ v.cantidad }}</td>
+          <td class="fw-bold">${{ "%.2f"|format(v.total) }}</td>
+          <td><span class="badge bg-secondary">{{ v.forma_pago }}</span></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-4">No se encontraron ventas con los filtros aplicados</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

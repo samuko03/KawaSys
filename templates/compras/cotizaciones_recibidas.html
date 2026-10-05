@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Cotizaciones Recibidas{% endblock %}
+{% block page_title %}Cotizaciones Recibidas de Proveedores{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-inbox me-2 text-primary"></i>Registrar Cotización</h5></div>
+      <div class="panel-body">
+        <form method="post" action="/compras/cotizaciones-recibidas/registrar">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Solicitud de cotización *</label>
+            <select name="solicitud_cotizacion_id" class="form-select" required>
+              <option value="">Seleccione...</option>
+              {% for sc in sol_cots %}<option value="{{ sc.id }}">#{{ sc.id }} — {{ sc.fecha }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Proveedor *</label>
+            <select name="proveedor_id" class="form-select" required>
+              <option value="">Seleccione...</option>
+              {% for p in proveedores %}<option value="{{ p.id }}">{{ p.razon_social }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Monto total *</label>
+            <div class="input-group"><span class="input-group-text">$</span>
+            <input type="number" name="monto_total" class="form-control" step="0.01" required/></div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Condiciones de pago</label>
+            <input type="text" name="condiciones" class="form-control" placeholder="Ej: 30 días, contado..."/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Plazo de entrega</label>
+            <input type="text" name="plazo_entrega" class="form-control" placeholder="Ej: 15 días hábiles"/>
+          </div>
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-check2 me-1"></i>Registrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-table me-2"></i>Cotizaciones recibidas</h5></div>
+      <div class="kawa-table">
+        <table class="table">
+          <thead><tr><th>#</th><th>Fecha</th><th>Proveedor</th><th>Monto</th><th>Plazo</th><th>Condiciones</th><th>Estado</th></tr></thead>
+          <tbody>
+            {% for c in cotizaciones %}
+            <tr>
+              <td class="fw-bold">#{{ c.id }}</td>
+              <td>{{ c.fecha }}</td>
+              <td>{{ c.proveedor.razon_social if c.proveedor else '-' }}</td>
+              <td class="fw-bold text-success">${{ "%.2f"|format(c.monto_total or 0) }}</td>
+              <td><small>{{ c.plazo_entrega or '-' }}</small></td>
+              <td><small>{{ c.condiciones or '-' }}</small></td>
+              <td>{% if c.seleccionada %}<span class="badge-estado badge-aprobada">Seleccionada</span>{% else %}<span class="badge-estado badge-pendiente">Disponible</span>{% endif %}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="text-center text-muted py-4">No hay cotizaciones recibidas</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

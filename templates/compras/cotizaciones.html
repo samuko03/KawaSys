@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Solicitudes de Cotización{% endblock %}
+{% block page_title %}Solicitudes de Cotización{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-file-earmark-plus me-2 text-primary"></i>Generar Cotización</h5></div>
+      <div class="panel-body">
+        <form method="post" action="/compras/cotizaciones/nueva">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Solicitud de compra *</label>
+            <select name="solicitud_compra_id" class="form-select" required>
+              <option value="">Seleccione...</option>
+              {% for s in solicitudes %}<option value="{{ s.id }}">#{{ s.id }} — {{ s.descripcion|truncate(40) if s.descripcion else 'Sin descripción' }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Descripción / Notas</label>
+            <textarea name="descripcion" class="form-control" rows="3" placeholder="Notas para el proveedor..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-send me-1"></i>Generar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-file-earmark-text me-2"></i>Solicitudes de Cotización</h5></div>
+      <div class="kawa-table">
+        <table class="table">
+          <thead><tr><th>#</th><th>Fecha</th><th>Sol. Compra</th><th>Descripción</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            {% for sc in sol_cots %}
+            <tr>
+              <td class="fw-bold">#{{ sc.id }}</td>
+              <td>{{ sc.fecha }}</td>
+              <td>#{{ sc.solicitud_compra_id }}</td>
+              <td><small>{{ sc.descripcion|truncate(50) if sc.descripcion else '-' }}</small></td>
+              <td><span class="badge-estado badge-{{ sc.estado }}">{{ sc.estado | capitalize }}</span></td>
+              <td>
+                <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editSC{{ sc.id }}">
+                  <i class="bi bi-pencil"></i>
+                </button>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No hay solicitudes de cotización</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for sc in sol_cots %}
+<div class="modal fade" id="editSC{{ sc.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Modificar Solicitud #{{ sc.id }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <form method="post" action="/compras/cotizaciones/{{ sc.id }}/modificar">
+        <div class="modal-body">
+          <div class="mb-3"><label class="form-label small fw-semibold">Descripción</label><textarea name="descripcion" class="form-control" rows="3">{{ sc.descripcion or '' }}</textarea></div>
+          <div class="mb-3"><label class="form-label small fw-semibold">Estado</label>
+            <select name="estado" class="form-select">
+              <option value="enviada" {% if sc.estado=='enviada' %}selected{% endif %}>Enviada</option>
+              <option value="respondida" {% if sc.estado=='respondida' %}selected{% endif %}>Respondida</option>
+              <option value="cancelada" {% if sc.estado=='cancelada' %}selected{% endif %}>Cancelada</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-kawa">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

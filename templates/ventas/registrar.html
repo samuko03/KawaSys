@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Registrar Venta{% endblock %}
+{% block page_title %}Registrar Venta{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-7">
+    <div class="panel">
+      <div class="panel-header">
+        <h5><i class="bi bi-cart-plus me-2 text-danger"></i>Nueva Venta</h5>
+        <a href="/ventas/" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+      </div>
+      <div class="panel-body">
+        <form method="post" action="/ventas/registrar">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Sucursal *</label>
+              <select name="sucursal_id" class="form-select" required>
+                <option value="">Seleccione...</option>
+                {% for s in sucursales %}
+                <option value="{{ s.id }}" {% if user.sucursal_id == s.id %}selected{% endif %}>{{ s.nombre }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Cliente (opcional)</label>
+              <select name="cliente_id" class="form-select">
+                <option value="">Sin cliente asignado</option>
+                {% for c in clientes %}
+                <option value="{{ c.id }}">{{ c.nombre }} {{ c.apellido }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Marca *</label>
+              <input type="text" name="marca" class="form-control" placeholder="Ej: Honda, Yamaha..." required/>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold small">Modelo *</label>
+              <input type="text" name="modelo" class="form-control" placeholder="Ej: XR150, FZ25..." required/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small">Cantidad *</label>
+              <input type="number" name="cantidad" class="form-control" value="1" min="1" required/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small">Precio unitario *</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="number" name="precio_unitario" class="form-control" step="0.01" placeholder="0.00" required id="precio"/>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold small">Forma de pago *</label>
+              <select name="forma_pago" class="form-select" required>
+                <option value="">Seleccione...</option>
+                <option value="Efectivo">Efectivo</option>
+                <option value="Transferencia">Transferencia</option>
+                <option value="Crédito">Crédito</option>
+                <option value="Cuenta corriente">Cuenta corriente</option>
+                <option value="Cheque">Cheque</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold small">Total estimado</label>
+              <div class="p-2 rounded fw-bold fs-5 text-danger" style="background:#fff0f0" id="total-display">$0.00</div>
+            </div>
+            <div class="col-12">
+              <label class="form-label fw-semibold small">Observaciones</label>
+              <textarea name="observaciones" class="form-control" rows="2" placeholder="Notas adicionales..."></textarea>
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-check2 me-2"></i>Registrar Venta</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+  const precio = document.getElementById('precio');
+  const cant = document.querySelector('[name=cantidad]');
+  const disp = document.getElementById('total-display');
+  function upd() { disp.textContent = '$' + ((parseFloat(precio.value)||0)*(parseInt(cant.value)||0)).toFixed(2); }
+  precio.addEventListener('input', upd);
+  cant.addEventListener('input', upd);
+</script>
+{% endblock %}

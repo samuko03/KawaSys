@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-4 col-lg-2">
+    <a href="/ventas/" class="stat-card">
+      <div class="icon icon-red"><i class="bi bi-cart3"></i></div>
+      <div><div class="num">{{ stats.ventas }}</div><div class="lbl">Ventas</div></div>
+    </a>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <a href="/ventas/faltantes" class="stat-card">
+      <div class="icon icon-orange"><i class="bi bi-exclamation-triangle"></i></div>
+      <div><div class="num">{{ stats.faltantes }}</div><div class="lbl">Faltantes</div></div>
+    </a>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <a href="/compras/ordenes" class="stat-card">
+      <div class="icon icon-blue"><i class="bi bi-journal-check"></i></div>
+      <div><div class="num">{{ stats.ordenes_pendientes }}</div><div class="lbl">Órdenes pend.</div></div>
+    </a>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <a href="/finanzas/" class="stat-card">
+      <div class="icon icon-purple"><i class="bi bi-check2-circle"></i></div>
+      <div><div class="num">{{ stats.operaciones_pendientes }}</div><div class="lbl">Op. pendientes</div></div>
+    </a>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <a href="/proveedores/" class="stat-card">
+      <div class="icon icon-green"><i class="bi bi-building"></i></div>
+      <div><div class="num">{{ stats.proveedores }}</div><div class="lbl">Proveedores</div></div>
+    </a>
+  </div>
+  <div class="col-6 col-md-4 col-lg-2">
+    <a href="/sucursales/" class="stat-card">
+      <div class="icon icon-teal"><i class="bi bi-geo-alt"></i></div>
+      <div><div class="num">{{ stats.sucursales }}</div><div class="lbl">Sucursales</div></div>
+    </a>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="panel">
+      <div class="panel-header">
+        <h5><i class="bi bi-clock-history me-2 text-danger"></i>Últimas Ventas</h5>
+        <a href="/ventas/registrar" class="btn btn-kawa btn-sm">+ Nueva venta</a>
+      </div>
+      <div class="kawa-table">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>#</th><th>Fecha</th><th>Modelo</th><th>Total</th><th>Pago</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for v in ultimas_ventas %}
+            <tr>
+              <td class="fw-bold text-danger">#{{ v.id }}</td>
+              <td>{{ v.fecha }}</td>
+              <td>{{ v.marca }} {{ v.modelo }}</td>
+              <td class="fw-semibold">${{ "%.2f"|format(v.total) }}</td>
+              <td><span class="badge bg-secondary">{{ v.forma_pago }}</span></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" class="text-center text-muted py-4">No hay ventas registradas aún</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="panel h-100">
+      <div class="panel-header">
+        <h5><i class="bi bi-lightning me-2 text-warning"></i>Accesos rápidos</h5>
+      </div>
+      <div class="panel-body">
+        <div class="d-grid gap-2">
+          {% if user.rol in ['ventas', 'sistema'] %}
+          <a href="/ventas/registrar" class="btn btn-outline-danger text-start">
+            <i class="bi bi-plus-circle me-2"></i>Registrar venta
+          </a>
+          <a href="/ventas/faltantes" class="btn btn-outline-warning text-start">
+            <i class="bi bi-exclamation-circle me-2"></i>Gestionar faltantes
+          </a>
+          {% endif %}
+          {% if user.rol in ['compras', 'sistema'] %}
+          <a href="/compras/solicitudes/nueva" class="btn btn-outline-primary text-start">
+            <i class="bi bi-bag-plus me-2"></i>Nueva solicitud de compra
+          </a>
+          <a href="/proveedores/nuevo" class="btn btn-outline-success text-start">
+            <i class="bi bi-building-add me-2"></i>Registrar proveedor
+          </a>
+          {% endif %}
+          {% if user.rol in ['finanzas', 'sistema'] %}
+          <a href="/finanzas/" class="btn btn-outline-purple text-start" style="color:#7c3aed;border-color:#7c3aed">
+            <i class="bi bi-check2-all me-2"></i>Aprobar operaciones
+          </a>
+          <a href="/finanzas/reporte-mensual" class="btn btn-outline-secondary text-start">
+            <i class="bi bi-bar-chart me-2"></i>Reporte mensual
+          </a>
+          {% endif %}
+          {% if user.rol == 'sistema' %}
+          <a href="/sistema/usuarios" class="btn btn-outline-dark text-start">
+            <i class="bi bi-people me-2"></i>Gestionar usuarios
+          </a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

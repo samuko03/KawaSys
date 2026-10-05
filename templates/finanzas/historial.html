@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Historial de Operaciones{% endblock %}
+{% block page_title %}Historial de Operaciones{% endblock %}
+{% block content %}
+<div class="panel">
+  <div class="panel-header">
+    <h5><i class="bi bi-clock-history me-2 text-secondary"></i>Operaciones resueltas</h5>
+    <div class="d-flex gap-2">
+      <a href="/finanzas/" class="btn btn-sm btn-outline-warning">Pendientes</a>
+      <a href="/finanzas/reporte-mensual" class="btn btn-sm btn-outline-primary">Reporte</a>
+    </div>
+  </div>
+  <div class="kawa-table">
+    <table class="table">
+      <thead><tr><th>#</th><th>Fecha</th><th>Resolución</th><th>Descripción</th><th>Monto</th><th>Resultado</th><th>Justificación</th><th></th></tr></thead>
+      <tbody>
+        {% for op in operaciones %}
+        <tr>
+          <td class="fw-bold">#{{ op.id }}</td>
+          <td>{{ op.fecha }}</td>
+          <td>{{ op.fecha_resolucion or '-' }}</td>
+          <td><small>{{ op.descripcion|truncate(40) if op.descripcion else '-' }}</small></td>
+          <td class="fw-bold">${{ "%.2f"|format(op.monto or 0) }}</td>
+          <td><span class="badge-estado badge-{{ op.resultado }}">{{ op.resultado | capitalize }}</span></td>
+          <td><small class="text-muted">{{ op.justificacion|truncate(40) if op.justificacion else '-' }}</small></td>
+          <td>
+            <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modOp{{ op.id }}">
+              <i class="bi bi-pencil"></i>
+            </button>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-muted py-4">No hay operaciones resueltas</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% for op in operaciones %}
+<div class="modal fade" id="modOp{{ op.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Modificar Operación #{{ op.id }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <form method="post" action="/finanzas/operaciones/{{ op.id }}/modificar">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Resultado</label>
+            <select name="resultado" class="form-select">
+              <option value="aprobada" {% if op.resultado=='aprobada' %}selected{% endif %}>Aprobada</option>
+              <option value="rechazada" {% if op.resultado=='rechazada' %}selected{% endif %}>Rechazada</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-semibold">Justificación</label>
+            <textarea name="justificacion" class="form-control" rows="3">{{ op.justificacion or '' }}</textarea>
+          </div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-kawa">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

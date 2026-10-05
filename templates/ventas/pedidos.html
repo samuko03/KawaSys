@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Pedidos de Clientes{% endblock %}
+{% block page_title %}Pedidos de Clientes — Modelos Faltantes{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-clipboard-plus me-2 text-danger"></i>Registrar Pedido</h5></div>
+      <div class="panel-body">
+        <form method="post" action="/ventas/pedidos/registrar">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Sucursal *</label>
+            <select name="sucursal_id" class="form-select" required>
+              {% for s in sucursales %}<option value="{{ s.id }}" {% if user.sucursal_id == s.id %}selected{% endif %}>{{ s.nombre }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Nombre del cliente *</label>
+            <input type="text" name="cliente_nombre" class="form-control" placeholder="Nombre completo" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Marca *</label>
+            <input type="text" name="marca" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Modelo *</label>
+            <input type="text" name="modelo" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Cantidad *</label>
+            <input type="number" name="cantidad" class="form-control" value="1" min="1" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Observaciones</label>
+            <textarea name="observaciones" class="form-control" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-plus me-1"></i>Registrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-list-ul me-2"></i>Pedidos registrados</h5></div>
+      <div class="kawa-table">
+        <table class="table">
+          <thead><tr><th>#</th><th>Fecha</th><th>Sucursal</th><th>Cliente</th><th>Marca/Modelo</th><th>Cant.</th></tr></thead>
+          <tbody>
+            {% for p in pedidos %}
+            <tr>
+              <td>#{{ p.id }}</td>
+              <td>{{ p.fecha }}</td>
+              <td>{{ p.sucursal.nombre if p.sucursal else '-' }}</td>
+              <td>{{ p.cliente_nombre }}</td>
+              <td><strong>{{ p.marca }}</strong> {{ p.modelo }}</td>
+              <td>{{ p.cantidad }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No hay pedidos registrados</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

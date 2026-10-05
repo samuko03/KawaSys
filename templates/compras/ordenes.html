@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Órdenes de Compra{% endblock %}
+{% block page_title %}Órdenes de Compra{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-journal-plus me-2 text-primary"></i>Generar Orden</h5></div>
+      <div class="panel-body">
+        <form method="post" action="/compras/ordenes/generar">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Cotización seleccionada *</label>
+            <select name="cotizacion_id" class="form-select" required>
+              <option value="">Seleccione...</option>
+              {% for c in cotizaciones %}<option value="{{ c.id }}">#{{ c.id }} — {{ c.proveedor.razon_social if c.proveedor else '?' }} — ${{ "%.2f"|format(c.monto_total or 0) }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Observaciones</label>
+            <textarea name="observaciones" class="form-control" rows="3" placeholder="Condiciones especiales, notas..."></textarea>
+          </div>
+          <div class="alert alert-info kawa-alert p-2" style="font-size:0.78rem">
+            <i class="bi bi-info-circle me-1"></i>La orden quedará pendiente de aprobación financiera.
+          </div>
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-journal-check me-1"></i>Generar Orden</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-journal-check me-2"></i>Órdenes de Compra</h5></div>
+      <div class="kawa-table">
+        <table class="table">
+          <thead><tr><th>#</th><th>Fecha</th><th>Proveedor</th><th>Monto</th><th>Estado</th><th>Observaciones</th></tr></thead>
+          <tbody>
+            {% for o in ordenes %}
+            <tr>
+              <td class="fw-bold">#{{ o.id }}</td>
+              <td>{{ o.fecha_emision }}</td>
+              <td>{{ o.cotizacion.proveedor.razon_social if o.cotizacion and o.cotizacion.proveedor else '-' }}</td>
+              <td class="fw-bold">${{ "%.2f"|format(o.monto_total or 0) }}</td>
+              <td><span class="badge-estado badge-{{ o.estado }}">{{ o.estado | capitalize }}</span></td>
+              <td><small class="text-muted">{{ o.observaciones|truncate(40) if o.observaciones else '-' }}</small></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No hay órdenes de compra generadas</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

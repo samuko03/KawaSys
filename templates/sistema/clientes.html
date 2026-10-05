@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Clientes Mayoristas{% endblock %}
+{% block page_title %}Gestión de Clientes Mayoristas{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-person-plus me-2 text-danger"></i>Registrar Cliente</h5></div>
+      <div class="panel-body">
+        <form method="post" action="/sistema/clientes/nuevo">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Nombre / Razón Social *</label>
+            <input type="text" name="nombre" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Apellido</label>
+            <input type="text" name="apellido" class="form-control"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">DNI / CUIT</label>
+            <input type="text" name="dni_cuit" class="form-control"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Teléfono</label>
+            <input type="text" name="telefono" class="form-control"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Email</label>
+            <input type="email" name="email" class="form-control"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Dirección</label>
+            <input type="text" name="direccion" class="form-control"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Límite de crédito</label>
+            <div class="input-group"><span class="input-group-text">$</span>
+            <input type="number" name="limite_credito" class="form-control" value="0" step="0.01"/></div>
+          </div>
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-plus me-1"></i>Registrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-person-badge me-2"></i>Clientes mayoristas</h5></div>
+      <div class="kawa-table">
+        <table class="table">
+          <thead><tr><th>#</th><th>Nombre</th><th>CUIT/DNI</th><th>Teléfono</th><th>Saldo CC</th><th>Acciones</th></tr></thead>
+          <tbody>
+            {% for c in clientes %}
+            <tr>
+              <td>{{ c.id }}</td>
+              <td class="fw-semibold">{{ c.nombre }} {{ c.apellido or '' }}</td>
+              <td><small>{{ c.dni_cuit or '-' }}</small></td>
+              <td><small>{{ c.telefono or '-' }}</small></td>
+              <td>
+                {% if c.cuenta_corriente %}
+                <span class="fw-bold {% if c.cuenta_corriente.saldo < 0 %}text-danger{% else %}text-success{% endif %}">
+                  ${{ "%.2f"|format(c.cuenta_corriente.saldo) }}
+                </span>
+                {% else %}<span class="text-muted small">Sin CC</span>{% endif %}
+              </td>
+              <td class="d-flex gap-1">
+                <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editCliente{{ c.id }}"><i class="bi bi-pencil"></i></button>
+                <a href="/sistema/clientes/{{ c.id }}/cuenta" class="btn btn-sm btn-outline-success"><i class="bi bi-credit-card"></i></a>
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No hay clientes registrados</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for c in clientes %}
+<div class="modal fade" id="editCliente{{ c.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Editar Cliente #{{ c.id }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <form method="post" action="/sistema/clientes/{{ c.id }}/editar">
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-6"><label class="form-label small fw-semibold">Nombre</label><input type="text" name="nombre" class="form-control" value="{{ c.nombre }}" required/></div>
+            <div class="col-6"><label class="form-label small fw-semibold">Apellido</label><input type="text" name="apellido" class="form-control" value="{{ c.apellido or '' }}"/></div>
+            <div class="col-6"><label class="form-label small fw-semibold">DNI/CUIT</label><input type="text" name="dni_cuit" class="form-control" value="{{ c.dni_cuit or '' }}"/></div>
+            <div class="col-6"><label class="form-label small fw-semibold">Teléfono</label><input type="text" name="telefono" class="form-control" value="{{ c.telefono or '' }}"/></div>
+            <div class="col-12"><label class="form-label small fw-semibold">Email</label><input type="email" name="email" class="form-control" value="{{ c.email or '' }}"/></div>
+            <div class="col-12"><label class="form-label small fw-semibold">Dirección</label><input type="text" name="direccion" class="form-control" value="{{ c.direccion or '' }}"/></div>
+          </div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-kawa">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

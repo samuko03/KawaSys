@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Nueva Solicitud de Compra{% endblock %}
+{% block page_title %}Nueva Solicitud de Compra{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header">
+        <h5><i class="bi bi-bag-plus me-2 text-primary"></i>Registrar Solicitud de Compra</h5>
+        <a href="/compras/" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+      </div>
+      <div class="panel-body">
+        <form method="post" action="/compras/solicitudes/nueva">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Descripción / Justificación *</label>
+            <textarea name="descripcion" class="form-control" rows="2" placeholder="Descripción general de la solicitud..." required></textarea>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Ítems a solicitar</label>
+            <div id="items-container">
+              <div class="row g-2 mb-2 item-row">
+                <div class="col-md-4"><input type="text" name="marcas" class="form-control" placeholder="Marca" required/></div>
+                <div class="col-md-5"><input type="text" name="modelos_list" class="form-control" placeholder="Modelo" required/></div>
+                <div class="col-md-2"><input type="number" name="cantidades" class="form-control" placeholder="Cant." min="1" value="1" required/></div>
+                <div class="col-md-1"><button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeItem(this)"><i class="bi bi-x"></i></button></div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addItem()">
+              <i class="bi bi-plus me-1"></i>Agregar ítem
+            </button>
+          </div>
+          {% if faltantes %}
+          <div class="mb-3 p-3 rounded" style="background:#eff6ff">
+            <div class="fw-bold small mb-2"><i class="bi bi-info-circle me-1 text-primary"></i>Faltantes emitidos disponibles:</div>
+            {% for f in faltantes %}
+            <span class="badge bg-light text-dark border me-1 mb-1" style="cursor:pointer" onclick="addFromFaltante('{{ f.marca }}','{{ f.modelo }}',{{ f.cantidad_solicitada }})">
+              {{ f.marca }} {{ f.modelo }} ({{ f.cantidad_solicitada }})
+            </span>
+            {% endfor %}
+          </div>
+          {% endif %}
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-check2 me-2"></i>Registrar Solicitud</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function addItem(marca='', modelo='', cant=1) {
+  const c = document.getElementById('items-container');
+  const d = document.createElement('div');
+  d.className = 'row g-2 mb-2 item-row';
+  d.innerHTML = `<div class="col-md-4"><input type="text" name="marcas" class="form-control" placeholder="Marca" value="${marca}" required/></div>
+    <div class="col-md-5"><input type="text" name="modelos_list" class="form-control" placeholder="Modelo" value="${modelo}" required/></div>
+    <div class="col-md-2"><input type="number" name="cantidades" class="form-control" placeholder="Cant." min="1" value="${cant}" required/></div>
+    <div class="col-md-1"><button type="button" class="btn btn-outline-danger btn-sm w-100" onclick="removeItem(this)"><i class="bi bi-x"></i></button></div>`;
+  c.appendChild(d);
+}
+function removeItem(btn) {
+  const rows = document.querySelectorAll('.item-row');
+  if (rows.length > 1) btn.closest('.item-row').remove();
+}
+function addFromFaltante(marca, modelo, cant) { addItem(marca, modelo, cant); }
+</script>
+{% endblock %}

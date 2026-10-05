@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% block title %}Reporte Mensual{% endblock %}
+{% block page_title %}Reporte Mensual de Operaciones{% endblock %}
+{% block content %}
+<div class="panel mb-3">
+  <div class="panel-header"><h5><i class="bi bi-funnel me-2"></i>Filtrar período</h5></div>
+  <div class="panel-body">
+    <form method="get" action="/finanzas/reporte-mensual" class="row g-3 align-items-end">
+      <div class="col-md-3">
+        <label class="form-label fw-semibold small">Mes</label>
+        <select name="mes" class="form-select">
+          <option value="">Todos</option>
+          {% for m in range(1,13) %}
+          <option value="{{ m }}" {% if mes == m|string %}selected{% endif %}>
+            {{ ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'][m-1] }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label fw-semibold small">Año</label>
+        <select name="anio" class="form-select">
+          <option value="">Todos</option>
+          {% for y in [2023,2024,2025,2026] %}
+          <option value="{{ y }}" {% if anio == y|string %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-search me-1"></i>Filtrar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="row g-3 mb-3">
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="icon icon-green"><i class="bi bi-check2-circle"></i></div>
+      <div><div class="num text-success">{{ aprobadas|length }}</div><div class="lbl">Aprobadas</div></div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="icon icon-red"><i class="bi bi-x-circle"></i></div>
+      <div><div class="num text-danger">{{ rechazadas|length }}</div><div class="lbl">Rechazadas</div></div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="icon icon-blue"><i class="bi bi-currency-dollar"></i></div>
+      <div><div class="num" style="font-size:1.3rem">${{ "%.0f"|format(total_aprobado) }}</div><div class="lbl">Total aprobado</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-header">
+    <h5><i class="bi bi-bar-chart me-2 text-primary"></i>Detalle del período</h5>
+  </div>
+  <div class="kawa-table">
+    <table class="table">
+      <thead><tr><th>#</th><th>Fecha</th><th>Descripción</th><th>Monto</th><th>Resultado</th><th>Justificación</th></tr></thead>
+      <tbody>
+        {% for op in operaciones %}
+        <tr>
+          <td class="fw-bold">#{{ op.id }}</td>
+          <td>{{ op.fecha }}</td>
+          <td>{{ op.descripcion|truncate(50) if op.descripcion else '-' }}</td>
+          <td class="fw-bold">${{ "%.2f"|format(op.monto or 0) }}</td>
+          <td><span class="badge-estado badge-{{ op.resultado }}">{{ op.resultado | capitalize }}</span></td>
+          <td><small class="text-muted">{{ op.justificacion|truncate(50) if op.justificacion else '-' }}</small></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">No hay operaciones en este período</td></tr>
+        {% endfor %}
+      </tbody>
+      {% if operaciones %}
+      <tfoot class="table-light fw-bold">
+        <tr>
+          <td colspan="3" class="text-end">Totales:</td>
+          <td>${{ "%.2f"|format(total_aprobado + total_rechazado) }}</td>
+          <td colspan="2">Aprobado: ${{ "%.2f"|format(total_aprobado) }} / Rechazado: ${{ "%.2f"|format(total_rechazado) }}</td>
+        </tr>
+      </tfoot>
+      {% endif %}
+    </table>
+  </div>
+</div>
+{% endblock %}

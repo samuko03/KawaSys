@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Aprobaciones Financieras{% endblock %}
+{% block page_title %}Operaciones Pendientes de Aprobación{% endblock %}
+{% block content %}
+{% if not pendientes %}
+<div class="alert alert-success kawa-alert"><i class="bi bi-check2-all me-2"></i>No hay operaciones pendientes de aprobación.</div>
+{% endif %}
+<div class="panel">
+  <div class="panel-header">
+    <h5><i class="bi bi-check2-circle me-2 text-warning"></i>Pendientes ({{ pendientes|length }})</h5>
+    <div class="d-flex gap-2">
+      <a href="/finanzas/historial" class="btn btn-sm btn-outline-secondary">Historial</a>
+      <a href="/finanzas/reporte-mensual" class="btn btn-sm btn-outline-primary">Reporte mensual</a>
+    </div>
+  </div>
+  <div class="kawa-table">
+    <table class="table">
+      <thead><tr><th>#</th><th>Fecha</th><th>Orden</th><th>Descripción</th><th>Monto</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {% for op in pendientes %}
+        <tr>
+          <td class="fw-bold">#{{ op.id }}</td>
+          <td>{{ op.fecha }}</td>
+          <td>{% if op.orden_id %}<span class="badge bg-secondary">#OC{{ op.orden_id }}</span>{% else %}-{% endif %}</td>
+          <td>{{ op.descripcion or '-' }}</td>
+          <td class="fw-bold">${{ "%.2f"|format(op.monto or 0) }}</td>
+          <td>
+            <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#resolverModal{{ op.id }}">
+              <i class="bi bi-check2 me-1"></i>Resolver
+            </button>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="6" class="text-center text-muted py-4">Sin operaciones pendientes</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% for op in pendientes %}
+<div class="modal fade" id="resolverModal{{ op.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-light">
+        <h5 class="modal-title">Resolver Operación #{{ op.id }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" action="/finanzas/operaciones/{{ op.id }}/resolver">
+        <div class="modal-body">
+          <div class="mb-3 p-3 rounded" style="background:#f8f9fa">
+            <div class="fw-bold">{{ op.descripcion or 'Sin descripción' }}</div>
+            <div class="text-muted small">Monto: <strong>${{ "%.2f"|format(op.monto or 0) }}</strong></div>
+            {% if op.orden %}<div class="text-muted small">Proveedor: {{ op.orden.cotizacion.proveedor.razon_social if op.orden.cotizacion and op.orden.cotizacion.proveedor else '-' }}</div>{% endif %}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Resultado *</label>
+            <div class="d-flex gap-3">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="resultado" value="aprobada" id="apr{{ op.id }}" required>
+                <label class="form-check-label text-success fw-semibold" for="apr{{ op.id }}">Aprobar</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="resultado" value="rechazada" id="rec{{ op.id }}">
+                <label class="form-check-label text-danger fw-semibold" for="rec{{ op.id }}">Rechazar</label>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Justificación</label>
+            <textarea name="justificacion" class="form-control" rows="3" placeholder="Motivo de la decisión..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-kawa">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

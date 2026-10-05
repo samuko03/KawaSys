@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Recepción de Pedidos{% endblock %}
+{% block page_title %}Pedidos Pendientes de Recepción{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-truck me-2 text-primary"></i>Registrar Pedido</h5></div>
+      <div class="panel-body">
+        <form method="post" action="/compras/recepcion/registrar">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Orden de compra aprobada *</label>
+            <select name="orden_id" class="form-select" required>
+              <option value="">Seleccione...</option>
+              {% for o in ordenes %}<option value="{{ o.id }}">#{{ o.id }} — ${{ "%.2f"|format(o.monto_total or 0) }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Fecha de despacho *</label>
+            <input type="date" name="fecha_despacho" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Fecha estimada de llegada *</label>
+            <input type="date" name="fecha_estimada_llegada" class="form-control" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Descripción</label>
+            <textarea name="descripcion" class="form-control" rows="3" placeholder="Detalle de la mercadería..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-plus me-1"></i>Registrar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-box-seam me-2"></i>Pedidos en tránsito</h5></div>
+      <div class="kawa-table">
+        <table class="table">
+          <thead><tr><th>#</th><th>Orden</th><th>Despacho</th><th>Llegada est.</th><th>Estado</th><th>Descripción</th></tr></thead>
+          <tbody>
+            {% for p in pedidos %}
+            <tr>
+              <td class="fw-bold">#{{ p.id }}</td>
+              <td>#{{ p.orden_id }}</td>
+              <td>{{ p.fecha_despacho }}</td>
+              <td>{{ p.fecha_estimada_llegada }}</td>
+              <td><span class="badge-estado badge-{{ 'pendiente' if p.estado == 'en_transito' else p.estado }}">{{ p.estado.replace('_',' ') | capitalize }}</span></td>
+              <td><small class="text-muted">{{ p.descripcion|truncate(50) if p.descripcion else '-' }}</small></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No hay pedidos pendientes de recepción</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

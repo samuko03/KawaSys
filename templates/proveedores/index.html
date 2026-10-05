@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Proveedores{% endblock %}
+{% block page_title %}Gestión de Proveedores{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div class="d-flex gap-2">
+    <a href="/proveedores/buscar?tipo=fijo" class="btn btn-sm btn-outline-success">Fijos</a>
+    <a href="/proveedores/buscar?tipo=alternativo" class="btn btn-sm btn-outline-secondary">Alternativos</a>
+    <a href="/proveedores/buscar" class="btn btn-sm btn-outline-primary"><i class="bi bi-search me-1"></i>Buscar</a>
+  </div>
+  {% if user.rol in ['compras','sistema'] %}
+  <a href="/proveedores/nuevo" class="btn btn-kawa"><i class="bi bi-plus-lg me-1"></i>Nuevo Proveedor</a>
+  {% endif %}
+</div>
+<div class="panel">
+  <div class="panel-header"><h5><i class="bi bi-building me-2 text-success"></i>Proveedores registrados</h5></div>
+  <div class="kawa-table">
+    <table class="table">
+      <thead><tr><th>#</th><th>Razón Social</th><th>CUIT</th><th>Tipo</th><th>Marcas</th><th>Teléfono</th><th>Email</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {% for p in proveedores %}
+        <tr>
+          <td class="fw-bold">#{{ p.id }}</td>
+          <td class="fw-semibold">{{ p.razon_social }}</td>
+          <td><small>{{ p.cuit or '-' }}</small></td>
+          <td>
+            {% if p.tipo == 'fijo' %}<span class="badge-estado badge-aprobada">Fijo</span>
+            {% else %}<span class="badge-estado badge-pendiente">Alternativo</span>{% endif %}
+          </td>
+          <td><small class="text-muted">{{ p.marcas|truncate(30) if p.marcas else '-' }}</small></td>
+          <td><small>{{ p.telefono or '-' }}</small></td>
+          <td><small>{{ p.email or '-' }}</small></td>
+          <td>
+            {% if user.rol in ['compras','sistema'] %}
+            <a href="/proveedores/{{ p.id }}/editar" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
+            {% endif %}
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="text-center text-muted py-4">No hay proveedores registrados</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

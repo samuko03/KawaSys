@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Editar Sucursal{% endblock %}
+{% block page_title %}Modificar Sucursal{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="panel">
+      <div class="panel-header">
+        <h5><i class="bi bi-pencil-square me-2 text-primary"></i>Editar: {{ sucursal.nombre }}</h5>
+        <a href="/sucursales/" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i>Volver</a>
+      </div>
+      <div class="panel-body">
+        <form method="post" action="/sucursales/{{ sucursal.id }}/editar">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Nombre *</label>
+            <input type="text" name="nombre" class="form-control" value="{{ sucursal.nombre }}" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Dirección</label>
+            <input type="text" name="direccion" class="form-control" value="{{ sucursal.direccion or '' }}"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Ciudad</label>
+            <input type="text" name="ciudad" class="form-control" value="{{ sucursal.ciudad or '' }}"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Teléfono</label>
+            <input type="text" name="telefono" class="form-control" value="{{ sucursal.telefono or '' }}"/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Email</label>
+            <input type="email" name="email" class="form-control" value="{{ sucursal.email or '' }}"/>
+          </div>
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-check2 me-2"></i>Guardar Cambios</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

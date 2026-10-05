@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}Modelos Faltantes{% endblock %}
+{% block page_title %}Listado de Modelos Faltantes{% endblock %}
+{% block content %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="panel">
+      <div class="panel-header"><h5><i class="bi bi-plus-circle me-2 text-warning"></i>Registrar Faltante</h5></div>
+      <div class="panel-body">
+        <form method="post" action="/ventas/faltantes/generar">
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Sucursal *</label>
+            <select name="sucursal_id" class="form-select" required>
+              {% for s in sucursales %}<option value="{{ s.id }}" {% if user.sucursal_id == s.id %}selected{% endif %}>{{ s.nombre }}</option>{% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Marca *</label>
+            <input type="text" name="marca" class="form-control" placeholder="Ej: Honda" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Modelo *</label>
+            <input type="text" name="modelo" class="form-control" placeholder="Ej: XR150" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Cantidad solicitada *</label>
+            <input type="number" name="cantidad_solicitada" class="form-control" value="1" min="1" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Período *</label>
+            <input type="text" name="periodo" class="form-control" placeholder="Ej: 1ra quincena junio 2025" required/>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-semibold small">Observaciones</label>
+            <textarea name="observaciones" class="form-control" rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-plus me-1"></i>Agregar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-8">
+    <div class="panel">
+      <div class="panel-header">
+        <h5><i class="bi bi-exclamation-circle me-2 text-warning"></i>Faltantes registrados</h5>
+      </div>
+      <div class="kawa-table">
+        <table class="table">
+          <thead><tr><th>#</th><th>Sucursal</th><th>Marca/Modelo</th><th>Cant.</th><th>Período</th><th>Estado</th><th>Acciones</th></tr></thead>
+          <tbody>
+            {% for f in faltantes %}
+            <tr>
+              <td>#{{ f.id }}</td>
+              <td>{{ f.sucursal.nombre if f.sucursal else '-' }}</td>
+              <td><strong>{{ f.marca }}</strong> {{ f.modelo }}</td>
+              <td>{{ f.cantidad_solicitada }}</td>
+              <td><small>{{ f.periodo }}</small></td>
+              <td>
+                {% if f.emitido %}<span class="badge-estado badge-emitida">Emitido</span>
+                {% else %}<span class="badge-estado badge-pendiente">Pendiente</span>{% endif %}
+              </td>
+              <td>
+                {% if not f.emitido %}
+                <div class="d-flex gap-1">
+                  <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ f.id }}">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <form method="post" action="/ventas/faltantes/{{ f.id }}/emitir" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-success" title="Emitir">
+                      <i class="bi bi-send"></i>
+                    </button>
+                  </form>
+                  <form method="post" action="/ventas/faltantes/{{ f.id }}/eliminar" class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Eliminar faltante?')">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </form>
+                </div>
+                {% endif %}
+              </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" class="text-center text-muted py-4">No hay faltantes registrados</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% for f in faltantes %}
+{% if not f.emitido %}
+<div class="modal fade" id="editModal{{ f.id }}" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Modificar Faltante #{{ f.id }}</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+      <form method="post" action="/ventas/faltantes/{{ f.id }}/modificar">
+        <div class="modal-body">
+          <div class="mb-3"><label class="form-label small fw-semibold">Marca</label><input type="text" name="marca" class="form-control" value="{{ f.marca }}" required/></div>
+          <div class="mb-3"><label class="form-label small fw-semibold">Modelo</label><input type="text" name="modelo" class="form-control" value="{{ f.modelo }}" required/></div>
+          <div class="mb-3"><label class="form-label small fw-semibold">Cantidad</label><input type="number" name="cantidad_solicitada" class="form-control" value="{{ f.cantidad_solicitada }}" required/></div>
+          <div class="mb-3"><label class="form-label small fw-semibold">Observaciones</label><textarea name="observaciones" class="form-control" rows="2">{{ f.observaciones or '' }}</textarea></div>
+        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="submit" class="btn btn-kawa">Guardar</button></div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endfor %}
+{% endblock %}

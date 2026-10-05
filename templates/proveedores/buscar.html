@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Buscar Proveedores{% endblock %}
+{% block page_title %}Buscar Proveedores{% endblock %}
+{% block content %}
+<div class="panel mb-3">
+  <div class="panel-header"><h5><i class="bi bi-search me-2"></i>Filtros de búsqueda</h5></div>
+  <div class="panel-body">
+    <form method="get" action="/proveedores/buscar" class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label fw-semibold small">Marca</label>
+        <input type="text" name="marca" class="form-control" value="{{ marca }}" placeholder="Ej: Honda"/>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold small">Modelo</label>
+        <input type="text" name="modelo" class="form-control" value="{{ modelo }}" placeholder="Ej: XR150"/>
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold small">Tipo</label>
+        <select name="tipo" class="form-select">
+          <option value="">Todos</option>
+          <option value="fijo" {% if tipo=='fijo' %}selected{% endif %}>Fijo</option>
+          <option value="alternativo" {% if tipo=='alternativo' %}selected{% endif %}>Alternativo</option>
+        </select>
+      </div>
+      <div class="col-md-2 d-flex align-items-end">
+        <button type="submit" class="btn btn-kawa w-100"><i class="bi bi-search me-1"></i>Buscar</button>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="panel">
+  <div class="panel-header">
+    <h5><i class="bi bi-building me-2 text-success"></i>Resultados ({{ proveedores|length }})</h5>
+    <a href="/proveedores/" class="btn btn-sm btn-outline-secondary">Ver todos</a>
+  </div>
+  <div class="kawa-table">
+    <table class="table">
+      <thead><tr><th>#</th><th>Razón Social</th><th>Tipo</th><th>Marcas</th><th>Modelos</th><th>Teléfono</th><th>Acciones</th></tr></thead>
+      <tbody>
+        {% for p in proveedores %}
+        <tr>
+          <td class="fw-bold">#{{ p.id }}</td>
+          <td class="fw-semibold">{{ p.razon_social }}</td>
+          <td>{% if p.tipo=='fijo' %}<span class="badge-estado badge-aprobada">Fijo</span>{% else %}<span class="badge-estado badge-pendiente">Alternativo</span>{% endif %}</td>
+          <td><small>{{ p.marcas or '-' }}</small></td>
+          <td><small>{{ p.modelos or '-' }}</small></td>
+          <td><small>{{ p.telefono or '-' }}</small></td>
+          <td><a href="/proveedores/{{ p.id }}/editar" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" class="text-center text-muted py-4">No se encontraron proveedores con los filtros aplicados</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
