@@ -9,6 +9,7 @@ using KawaSysWF.Forms.Compras;
 using KawaSysWF.Forms.Proveedores;
 using KawaSysWF.Forms.Finanzas;
 using KawaSysWF.Forms.Sistema;
+using KawaSysWF.Forms.Facturacion;
 
 namespace KawaSysWF.Forms
 {
@@ -217,6 +218,14 @@ namespace KawaSysWF.Forms
                 AddNavItem("✅", "Aprobaciones", () => ShowForm(new AprobacionesForm(CurrentUser)));
                 AddNavItem("📊", "Historial", () => ShowForm(new HistorialOperacionesForm(CurrentUser)));
                 AddNavItem("📈", "Reporte Mensual", () => ShowForm(new ReporteMensualForm(CurrentUser)));
+            }
+
+            if (isVentas || isFinanzas)
+            {
+                AddSection("FACTURACIÓN Y COBROS");
+                AddNavItem("🧾", "Facturas", () => ShowForm(new FacturasForm(CurrentUser)));
+                AddNavItem("💵", "Cobros y Pendientes", () => ShowForm(new CobrosForm(CurrentUser)), isFinanzas);
+                AddNavItem("🗓", "Facturación Mensual", () => ShowForm(new FacturacionMensualForm(CurrentUser)), isFinanzas);
             }
 
             AddSection("CLIENTES");
