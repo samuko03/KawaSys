@@ -168,4 +168,42 @@ namespace KawaSysWF.Database
         public string NombreCompleto => $"{Nombre} {Apellido}".Trim();
         public override string ToString() => NombreCompleto;
     }
+
+    public class Factura
+    {
+        public int Id { get; set; }
+        public int VentaId { get; set; }
+        public int? ClienteId { get; set; }
+        public string ClienteNombre { get; set; } = "";
+        public string SucursalNombre { get; set; } = "";
+        public int NroFactura { get; set; }
+        public string Fecha { get; set; } = "";
+        public string Tipo { get; set; } = "B";
+        public decimal Total { get; set; }
+        public decimal Cobrado { get; set; }
+        public string Estado { get; set; } = "emitida";
+        public bool ACuenta { get; set; }
+        public decimal Pendiente => Total - Cobrado;
+        public string NroTexto => $"{NroFactura:D8}";
+    }
+
+    public class FacturaLinea
+    {
+        public string Descripcion { get; set; } = "";
+        public int Cantidad { get; set; }
+        public decimal PrecioUnitario { get; set; }
+        public decimal SubTotal { get; set; }
+    }
+
+    public class Cobro
+    {
+        public int Id { get; set; }
+        public int FacturaId { get; set; }
+        public int NroFactura { get; set; }
+        public string Fecha { get; set; } = "";
+        public decimal Monto { get; set; }
+        public string MedioPago { get; set; } = "";
+        public string Observaciones { get; set; } = "";
+        public string NroRecibo => $"{Id:D8}";
+    }
 }

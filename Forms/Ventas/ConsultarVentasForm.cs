@@ -103,7 +103,9 @@ namespace KawaSysWF.Forms.Ventas
                 "Confirmar eliminación", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (r == DialogResult.Yes)
             {
-                Repository.DeleteVenta(v.Id);
+                try { Repository.DeleteVenta(v.Id); }
+                catch (InvalidOperationException ex)
+                { MessageBox.Show(ex.Message, "No se puede eliminar", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 LoadData();
             }
         }
@@ -218,7 +220,7 @@ namespace KawaSysWF.Forms.Ventas
 
             var suc = (Sucursal?)cmbSucursal.SelectedItem;
             var cli = (Cliente?)cmbCliente.SelectedItem;
-            Repository.UpdateVenta(new Venta
+            try { Repository.UpdateVenta(new Venta
             {
                 Id = _v.Id,
                 Fecha = _v.Fecha,
@@ -231,7 +233,9 @@ namespace KawaSysWF.Forms.Ventas
                 Total = precio * (decimal)nudCantidad.Value,
                 FormaPago = cmbPago.SelectedItem?.ToString() ?? "",
                 Observaciones = txtObs.Text.Trim()
-            });
+            }); }
+            catch (InvalidOperationException ex)
+            { MessageBox.Show(ex.Message, "No se puede modificar", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
             DialogResult = DialogResult.OK;
             Close();
         }

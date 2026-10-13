@@ -213,6 +213,7 @@ CREATE TABLE IF NOT EXISTS operaciones (
 );
 ";
             cmd.ExecuteNonQuery();
+            FacturacionRepository.EnsureSchema(conn);
             SeedData(conn);
         }
 

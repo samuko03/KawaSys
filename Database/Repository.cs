@@ -141,9 +141,11 @@ namespace KawaSysWF.Database
         public static void SaveVenta(Venta v)
         {
             using var conn = DBHelper.GetConnection();
+            using var tx = conn.BeginTransaction();
             var cmd = conn.CreateCommand();
+            cmd.Transaction = tx;
             cmd.CommandText = @"INSERT INTO ventas(fecha,sucursal_id,cliente_id,marca,modelo,cantidad,precio_unitario,total,forma_pago,observaciones)
-                VALUES(@f,@s,@c,@ma,@mo,@ca,@pu,@t,@fp,@ob)";
+                VALUES(@f,@s,@c,@ma,@mo,@ca,@pu,@t,@fp,@ob); SELECT last_insert_rowid();";
             cmd.Parameters.AddWithValue("@f", v.Fecha);
             cmd.Parameters.AddWithValue("@s", v.SucursalId);
             cmd.Parameters.AddWithValue("@c", (object?)v.ClienteId ?? DBNull.Value);
@@ -154,11 +156,28 @@ namespace KawaSysWF.Database
             cmd.Parameters.AddWithValue("@t", (double)v.Total);
             cmd.Parameters.AddWithValue("@fp", v.FormaPago);
             cmd.Parameters.AddWithValue("@ob", v.Observaciones);
-            cmd.ExecuteNonQuery();
+            int ventaId = (int)(long)cmd.ExecuteScalar()!;
+            // KAWA-43: cada venta registrada genera su factura (y su cobro si es al contado).
+            FacturacionRepository.GenerarEnTx(conn, tx, ventaId, debitarCC: true);
+            tx.Commit();
+        }
+
+        // Una venta facturada no se elimina (la factura queda como respaldo) y,
+        // mientras su factura esté vigente, tampoco se modifica.
+        private static void ExigirSinFactura(int ventaId, string accion)
+        {
+            if (FacturacionRepository.FacturaDeVenta(ventaId) is not (int nro, string estado)) return;
+            if (accion == "eliminar")
+                throw new InvalidOperationException(
+                    $"No se puede eliminar la venta #{ventaId}: tiene la factura N° {nro:D8} ({estado}). Las ventas facturadas no se eliminan; si hubo un error, anulá la factura.");
+            if (estado != "anulada")
+                throw new InvalidOperationException(
+                    $"No se puede modificar la venta #{ventaId}: tiene la factura N° {nro:D8}. Anulá la factura primero.");
         }
 
         public static void UpdateVenta(Venta v)
         {
+            ExigirSinFactura(v.Id, "modificar");
             using var conn = DBHelper.GetConnection();
             var cmd = conn.CreateCommand();
             cmd.CommandText = @"UPDATE ventas SET sucursal_id=@s, cliente_id=@c, marca=@ma, modelo=@mo,
@@ -178,6 +197,7 @@ namespace KawaSysWF.Database
 
         public static void DeleteVenta(int id)
         {
+            ExigirSinFactura(id, "eliminar");
             using var conn = DBHelper.GetConnection();
             var cmd = conn.CreateCommand();
             cmd.CommandText = "DELETE FROM ventas WHERE id=@id";
