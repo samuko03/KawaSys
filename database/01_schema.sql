@@ -77,11 +77,15 @@ CREATE TABLE Factura (
     Tipo       CHAR(1) NOT NULL CHECK (Tipo IN ('A','B','C')),
     Total      DECIMAL(18,2) NOT NULL,
     Estado     NVARCHAR(20) NOT NULL DEFAULT 'Emitida'
+               CHECK (Estado IN ('Emitida','Parcial','Cobrada','Anulada')),
+    ACuenta    BIT NOT NULL DEFAULT 0
 );
 
 CREATE TABLE DetalleFactura (
     IdDetalleFactura INT IDENTITY PRIMARY KEY,
     IdFactura        INT NOT NULL REFERENCES Factura(IdFactura) ON DELETE CASCADE,
+    IdMoto           INT NOT NULL REFERENCES Moto(IdMoto),
+    Descripcion      NVARCHAR(200) NOT NULL,
     Cantidad         INT NOT NULL,
     PrecioUnitario   DECIMAL(18,2) NOT NULL,
     SubTotal         AS (Cantidad * PrecioUnitario) PERSISTED

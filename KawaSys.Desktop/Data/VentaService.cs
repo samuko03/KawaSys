@@ -1,5 +1,5 @@
-using KawaSys.Desktop.Models;
 using Microsoft.Data.SqlClient;
+using static KawaSys.Desktop.Data.Sql;
 
 namespace KawaSys.Desktop.Data;
 
@@ -14,18 +14,8 @@ public class VentaService
 {
     public const string CuentaCorriente = "Cuenta Corriente";
 
-    public List<(int Id, string Nombre)> Clientes() => Listar("SELECT IdCliente, Nombre FROM Cliente WHERE Activo = 1 ORDER BY Nombre");
-    public List<(int Id, string Nombre)> Sucursales() => Listar("SELECT IdSucursal, Nombre FROM Sucursal ORDER BY Nombre");
-
-    private static List<(int, string)> Listar(string sql)
-    {
-        using var cn = Db.Open();
-        using var cmd = new SqlCommand(sql, cn);
-        using var rd = cmd.ExecuteReader();
-        var r = new List<(int, string)>();
-        while (rd.Read()) r.Add((rd.GetInt32(0), rd.GetString(1)));
-        return r;
-    }
+    public List<(int Id, string Nombre)> Clientes() => Query("SELECT IdCliente, Nombre FROM Cliente WHERE Activo = 1 ORDER BY Nombre", rd => (rd.GetInt32(0), rd.GetString(1)));
+    public List<(int Id, string Nombre)> Sucursales() => Query("SELECT IdSucursal, Nombre FROM Sucursal ORDER BY Nombre", rd => (rd.GetInt32(0), rd.GetString(1)));
 
     /// <summary>
     /// Transacción central: registra venta + detalle, descuenta stock, emite factura y
@@ -64,17 +54,7 @@ public class VentaService
                     ("@v", idVenta), ("@m", it.IdMoto), ("@q", it.Cantidad), ("@p", it.PrecioUnitario));
             }
 
-            int nro = Scalar<int>(cn, tx, "SELECT ISNULL(MAX(NroFactura), 0) + 1 FROM Factura WITH (UPDLOCK, HOLDLOCK)");
-            int idFactura = Scalar<int>(cn, tx,
-                @"INSERT INTO Factura (IdVenta, IdCliente, NroFactura, Tipo, Total)
-                  OUTPUT INSERTED.IdFactura
-                  VALUES (@v, @c, @n, 'B', @t)",
-                ("@v", idVenta), ("@c", idCliente), ("@n", nro), ("@t", total));
-
-            foreach (var it in items)
-                Exec(cn, tx,
-                    "INSERT INTO DetalleFactura (IdFactura, Cantidad, PrecioUnitario) VALUES (@f, @q, @p)",
-                    ("@f", idFactura), ("@q", it.Cantidad), ("@p", it.PrecioUnitario));
+            var (idFactura, nro) = FacturaService.GenerarEnTx(cn, tx, idVenta, aCuenta);
 
             if (aCuenta)
             {
@@ -87,9 +67,7 @@ public class VentaService
             }
             else
             {
-                Exec(cn, tx,
-                    "INSERT INTO Cobro (IdFactura, Monto, MedioPago) VALUES (@f, @t, @mp)",
-                    ("@f", idFactura), ("@t", total), ("@mp", medioPago));
+                FacturaService.CobroEnTx(cn, tx, idFactura, total, medioPago);
             }
 
             tx.Commit();
@@ -100,24 +78,5 @@ public class VentaService
             tx.Rollback();
             throw;
         }
-    }
-
-    private static int Exec(SqlConnection cn, SqlTransaction tx, string sql, params (string, object)[] p)
-    {
-        using var cmd = Cmd(cn, tx, sql, p);
-        return cmd.ExecuteNonQuery();
-    }
-
-    private static T Scalar<T>(SqlConnection cn, SqlTransaction tx, string sql, params (string, object)[] p)
-    {
-        using var cmd = Cmd(cn, tx, sql, p);
-        return (T)cmd.ExecuteScalar()!;
-    }
-
-    private static SqlCommand Cmd(SqlConnection cn, SqlTransaction tx, string sql, (string, object)[] p)
-    {
-        var cmd = new SqlCommand(sql, cn, tx);
-        foreach (var (n, v) in p) cmd.Parameters.AddWithValue(n, v);
-        return cmd;
     }
 }
