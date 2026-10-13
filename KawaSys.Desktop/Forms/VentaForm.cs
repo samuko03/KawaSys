@@ -60,7 +60,7 @@ public class VentaForm : Form
             _sucursales = _service.Sucursales();
             _cmbCliente.DataSource = _clientes.Select(c => c.Nombre).ToList();
             _cmbSucursal.DataSource = _sucursales.Select(s => s.Nombre).ToList();
-            _cmbPago.DataSource = new[] { "Efectivo", "Tarjeta", "Transferencia", VentaService.CuentaCorriente };
+            _cmbPago.DataSource = FacturaService.MediosDePago.Append(VentaService.CuentaCorriente).ToArray();
             RecargarMotos();
         }
         catch (Exception ex) { MessageBox.Show(ex.Message, "Error de base de datos"); }

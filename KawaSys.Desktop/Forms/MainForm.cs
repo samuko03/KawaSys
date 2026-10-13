@@ -5,15 +5,21 @@ public class MainForm : Form
     public MainForm()
     {
         Text = "KawaSys";
-        Size = new Size(420, 240);
+        Size = new Size(420, 340);
         StartPosition = FormStartPosition.CenterScreen;
 
-        var btnMotos = new Button { Text = "Motos (ABMC)", Dock = DockStyle.Top, Height = 60 };
-        var btnVenta = new Button { Text = "Registrar venta", Dock = DockStyle.Top, Height = 60 };
-        btnMotos.Click += (_, _) => new MotosForm().ShowDialog(this);
-        btnVenta.Click += (_, _) => new VentaForm().ShowDialog(this);
+        // Dock.Top apila al revés: se agregan de abajo hacia arriba.
+        Agregar("Listado mensual de facturas", () => new ReporteMensualForm());
+        Agregar("Cobros y pagos pendientes", () => new CobrosForm());
+        Agregar("Facturas", () => new FacturasForm());
+        Agregar("Registrar venta", () => new VentaForm());
+        Agregar("Motos (ABMC)", () => new MotosForm());
+    }
 
-        Controls.Add(btnVenta);
-        Controls.Add(btnMotos);
+    private void Agregar(string texto, Func<Form> crear)
+    {
+        var btn = new Button { Text = texto, Dock = DockStyle.Top, Height = 54 };
+        btn.Click += (_, _) => { using var f = crear(); f.ShowDialog(this); };
+        Controls.Add(btn);
     }
 }
