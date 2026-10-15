@@ -253,7 +253,7 @@ CREATE TABLE IF NOT EXISTS cobros (
         {
             var desde = new DateTime(anio, mes, 1);
             return Listar(desde: desde.ToString("yyyy-MM-dd"), hasta: desde.AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd"))
-                .Where(f => f.Estado != "anulada").OrderBy(f => f.NroFactura).ToList();
+                .OrderBy(f => f.NroFactura).ToList();
         }
 
         // ── KAWA-47 / KAWA-48 / KAWA-51: cobros y estado de factura ───────────
@@ -279,7 +279,6 @@ CREATE TABLE IF NOT EXISTS cobros (
                 total = (decimal)r.GetDouble(0); estado = r.GetString(1); aCuenta = r.GetInt32(2) == 1;
                 clienteId = r.IsDBNull(3) ? null : r.GetInt32(3); nro = r.GetInt32(4); cobrado = (decimal)r.GetDouble(5);
             }
-            if (estado == "anulada") throw new InvalidOperationException("La factura está anulada.");
             decimal pendiente = Math.Round(total - cobrado, 2);
             if (monto > pendiente) throw new InvalidOperationException($"El monto supera el saldo pendiente ({pendiente:C2}).");
 
@@ -304,41 +303,6 @@ CREATE TABLE IF NOT EXISTS cobros (
 
             tx.Commit();
             return cobroId;
-        }
-
-        /// <summary>
-        /// Anula una factura. Las facturas a cuenta corriente con cobros no pueden anularse;
-        /// si la factura debitó la cuenta corriente del cliente, el débito se revierte.
-        /// </summary>
-        public static void Anular(int facturaId)
-        {
-            using var conn = DBHelper.GetConnection();
-            using var tx = conn.BeginTransaction();
-            var cmd = conn.CreateCommand();
-            cmd.Transaction = tx;
-            cmd.CommandText = @"SELECT f.total, f.estado, f.a_cuenta, f.debito_cc, f.cliente_id, f.nro_factura,
-                                       COALESCE((SELECT SUM(monto) FROM cobros WHERE factura_id=f.id),0)
-                                FROM facturas f WHERE f.id=@f";
-            cmd.Parameters.AddWithValue("@f", facturaId);
-            decimal total, cobrado; string estado; bool aCuenta, debito; int? clienteId; int nro;
-            using (var r = cmd.ExecuteReader())
-            {
-                if (!r.Read()) throw new InvalidOperationException("La factura no existe.");
-                total = (decimal)r.GetDouble(0); estado = r.GetString(1); aCuenta = r.GetInt32(2) == 1; debito = r.GetInt32(3) == 1;
-                clienteId = r.IsDBNull(4) ? null : r.GetInt32(4); nro = r.GetInt32(5); cobrado = (decimal)r.GetDouble(6);
-            }
-            if (estado == "anulada") throw new InvalidOperationException("La factura ya está anulada.");
-            if (aCuenta && cobrado > 0)
-                throw new InvalidOperationException("La factura tiene cobros registrados en cuenta corriente y no puede anularse.");
-
-            cmd.Parameters.Clear();
-            cmd.CommandText = "UPDATE facturas SET estado='anulada' WHERE id=@f";
-            cmd.Parameters.AddWithValue("@f", facturaId);
-            cmd.ExecuteNonQuery();
-
-            if (debito && clienteId != null)
-                CcEnTx(conn, tx, clienteId.Value, "credito", total, $"Anulación factura {nro:D8}");
-            tx.Commit();
         }
 
         /// <summary>Devuelve N° y estado de la factura de una venta, o null si la venta no tiene factura.</summary>

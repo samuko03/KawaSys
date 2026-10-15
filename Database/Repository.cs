@@ -162,17 +162,12 @@ namespace KawaSysWF.Database
             tx.Commit();
         }
 
-        // Una venta facturada no se elimina (la factura queda como respaldo) y,
-        // mientras su factura esté vigente, tampoco se modifica.
+        // Una factura emitida ya fue efectuada: la venta facturada no se modifica ni se elimina.
         private static void ExigirSinFactura(int ventaId, string accion)
         {
-            if (FacturacionRepository.FacturaDeVenta(ventaId) is not (int nro, string estado)) return;
-            if (accion == "eliminar")
-                throw new InvalidOperationException(
-                    $"No se puede eliminar la venta #{ventaId}: tiene la factura N° {nro:D8} ({estado}). Las ventas facturadas no se eliminan; si hubo un error, anulá la factura.");
-            if (estado != "anulada")
-                throw new InvalidOperationException(
-                    $"No se puede modificar la venta #{ventaId}: tiene la factura N° {nro:D8}. Anulá la factura primero.");
+            if (FacturacionRepository.FacturaDeVenta(ventaId) is not (int nro, string _)) return;
+            throw new InvalidOperationException(
+                $"No se puede {accion} la venta #{ventaId}: ya fue facturada (factura N° {nro:D8}) y la operación está efectuada.");
         }
 
         public static void UpdateVenta(Venta v)

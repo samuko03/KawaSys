@@ -6,7 +6,7 @@ using KawaSysWF.UI;
 
 namespace KawaSysWF.Forms.Facturacion
 {
-    /// <summary>Facturas: generar, detalle, emitir, consultar con filtros y anular (KAWA-43/44/45/46/51/52).</summary>
+    /// <summary>Facturas: generar, detalle, emitir y consultar con filtros (KAWA-43/44/45/46/51/52).</summary>
     public class FacturasForm : Form
     {
         private readonly Usuario _user;
@@ -70,15 +70,13 @@ namespace KawaSysWF.Forms.Facturacion
             var acciones = new Panel { Height = 44, Dock = DockStyle.Top, BackColor = AppTheme.White, Padding = new Padding(12, 6, 12, 6) };
             acciones.Paint += (s, e) => e.Graphics.DrawLine(new Pen(Color.FromArgb(220, 220, 230)), 0, acciones.Height - 1, acciones.Width, acciones.Height - 1);
             var btnEmitir = AppTheme.MakeButton("🖨  Emitir comprobante", AppTheme.Info, 190, 32);
-            var btnAnular = AppTheme.MakeButton("🚫  Anular factura", Color.FromArgb(220, 38, 38), 160, 32);
             var btnGenerar = AppTheme.MakeButton("⚙  Generar facturas pendientes", AppTheme.Primary, 250, 32);
             btnEmitir.Click += (s, e) => Emitir();
-            btnAnular.Click += (s, e) => Anular();
             btnGenerar.Click += (s, e) => GenerarPendientes();
             lblResumen = new Label { AutoSize = true, Font = AppTheme.FontBold, ForeColor = AppTheme.Accent, Margin = new Padding(12, 8, 0, 0) };
             var flow = new FlowLayoutPanel { Dock = DockStyle.Fill, WrapContents = false };
-            btnEmitir.Margin = new Padding(0, 0, 8, 0); btnAnular.Margin = new Padding(0, 0, 8, 0); btnGenerar.Margin = new Padding(0, 0, 8, 0);
-            flow.Controls.AddRange(new Control[] { btnEmitir, btnAnular, btnGenerar, lblResumen });
+            btnEmitir.Margin = new Padding(0, 0, 8, 0); btnGenerar.Margin = new Padding(0, 0, 8, 0);
+            flow.Controls.AddRange(new Control[] { btnEmitir, btnGenerar, lblResumen });
             acciones.Controls.Add(flow);
 
             grid = AppTheme.MakeGrid();
@@ -148,15 +146,6 @@ namespace KawaSysWF.Forms.Facturacion
         {
             if (Seleccion is not Factura f) { MessageBox.Show("Seleccioná una factura de la lista.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
             Comprobantes.AbrirFactura(FacturacionRepository.Obtener(f.Id) ?? f, FacturacionRepository.Detalle(f.Id));
-        }
-
-        private void Anular()
-        {
-            if (Seleccion is not Factura f) { MessageBox.Show("Seleccioná una factura de la lista.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
-            if (MessageBox.Show($"¿Anular la factura N° {f.NroTexto} ({f.Total:C2})?", "Confirmar anulación",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
-            try { FacturacionRepository.Anular(f.Id); LoadData(); }
-            catch (InvalidOperationException ex) { MessageBox.Show(ex.Message, "No se pudo anular", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
         }
 
         private void GenerarPendientes()
