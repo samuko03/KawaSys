@@ -318,6 +318,21 @@ namespace KawaSysWF.Database
             using var tx = conn.BeginTransaction();
             var cmd = conn.CreateCommand();
             cmd.Transaction = tx;
+
+            // Un cliente con ventas o facturas no se elimina: son el respaldo de operaciones ya efectuadas.
+            cmd.CommandText = @"SELECT (SELECT COUNT(*) FROM ventas WHERE cliente_id=@id),
+                                       (SELECT COUNT(*) FROM facturas WHERE cliente_id=@id)";
+            cmd.Parameters.AddWithValue("@id", id);
+            using (var r = cmd.ExecuteReader())
+            {
+                r.Read();
+                long ventas = r.GetInt64(0), facturas = r.GetInt64(1);
+                if (ventas > 0 || facturas > 0)
+                    throw new InvalidOperationException(
+                        $"No se puede eliminar el cliente: tiene {ventas} venta(s) y {facturas} factura(s) registradas. " +
+                        "Los clientes con operaciones efectuadas no se eliminan.");
+            }
+            cmd.Parameters.Clear();
             cmd.CommandText = "DELETE FROM transacciones_cc WHERE cuenta_id IN (SELECT id FROM cuentas_corrientes WHERE cliente_id=@id)";
             cmd.Parameters.AddWithValue("@id", id);
             cmd.ExecuteNonQuery();

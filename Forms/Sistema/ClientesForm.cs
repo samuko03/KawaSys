@@ -46,7 +46,11 @@ namespace KawaSysWF.Forms.Sistema
                 if (grid.SelectedRows.Count > 0 && grid.SelectedRows[0].Tag is Cliente c)
                 {
                     if (MessageBox.Show($"¿Eliminar el cliente \"{c.NombreCompleto}\"?\nSe borrará también su cuenta corriente y movimientos.", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                    { Repository.DeleteCliente(c.Id); LoadGrid(); }
+                    {
+                        try { Repository.DeleteCliente(c.Id); LoadGrid(); }
+                        catch (InvalidOperationException ex)
+                        { MessageBox.Show(ex.Message, "No se puede eliminar", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+                    }
                 }
                 else MessageBox.Show("Seleccioná un cliente.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             };
