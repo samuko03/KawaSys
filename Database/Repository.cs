@@ -123,7 +123,8 @@ namespace KawaSysWF.Database
             using var conn = DBHelper.GetConnection();
             var cmd = conn.CreateCommand();
             cmd.CommandText = @"SELECT v.id,v.fecha,v.sucursal_id,COALESCE(s.nombre,''),v.cliente_id,COALESCE(c.nombre||' '||COALESCE(c.apellido,''),''),
-                v.marca,v.modelo,v.cantidad,v.precio_unitario,v.total,v.forma_pago,COALESCE(v.observaciones,'')
+                v.marca,v.modelo,v.cantidad,v.precio_unitario,v.total,v.forma_pago,COALESCE(v.observaciones,''),
+                (SELECT f.nro_factura FROM facturas f WHERE f.venta_id=v.id)
                 FROM ventas v LEFT JOIN sucursales s ON v.sucursal_id=s.id LEFT JOIN clientes c ON v.cliente_id=c.id WHERE 1=1";
             if (sucursalId.HasValue) { cmd.CommandText += " AND v.sucursal_id=@s"; cmd.Parameters.AddWithValue("@s", sucursalId); }
             if (desde != null) { cmd.CommandText += " AND v.fecha>=@d"; cmd.Parameters.AddWithValue("@d", desde); }
@@ -135,7 +136,8 @@ namespace KawaSysWF.Database
                     SucursalNombre=r.GetString(3), ClienteId=r.IsDBNull(4)?null:r.GetInt32(4), ClienteNombre=r.GetString(5),
                     Marca=r.IsDBNull(6)?"":r.GetString(6), Modelo=r.GetString(7), Cantidad=r.GetInt32(8),
                     PrecioUnitario=(decimal)r.GetDouble(9), Total=(decimal)r.GetDouble(10),
-                    FormaPago=r.IsDBNull(11)?"":r.GetString(11), Observaciones=r.GetString(12) });
+                    FormaPago=r.IsDBNull(11)?"":r.GetString(11), Observaciones=r.GetString(12),
+                    NroFactura=r.IsDBNull(13)?null:r.GetInt32(13) });
             return list;
         }
 
@@ -168,7 +170,7 @@ namespace KawaSysWF.Database
         {
             if (FacturacionRepository.FacturaDeVenta(ventaId) is not (int nro, string _)) return;
             throw new InvalidOperationException(
-                $"No se puede {accion} la venta #{ventaId}: ya fue facturada (factura N° {nro:D8}) y la operación está efectuada.");
+                $"No se puede {accion} la venta #{ventaId}: ya tiene emitida la factura N° {nro:D8}, y una factura emitida cierra la operación.");
         }
 
         public static void UpdateVenta(Venta v)

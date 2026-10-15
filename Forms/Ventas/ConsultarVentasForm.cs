@@ -12,7 +12,8 @@ namespace KawaSysWF.Forms.Ventas
         private ComboBox cmbSucursal = null!;
         private DateTimePicker dtDesde = null!, dtHasta = null!;
         private DataGridView grid = null!;
-        private Label lblTotal = null!;
+        private Label lblTotal = null!, lblNota = null!;
+        private Button btnEditar = null!, btnEliminar = null!;
 
         public ConsultarVentasForm(Usuario u) { _user = u; Build(); }
 
@@ -49,13 +50,14 @@ namespace KawaSysWF.Forms.Ventas
             // Barra de acciones
             var acciones = new Panel { Height = 44, Dock = DockStyle.Top, BackColor = AppTheme.White, Padding = new Padding(12, 6, 12, 6) };
             acciones.Paint += (s, e) => e.Graphics.DrawLine(new Pen(Color.FromArgb(220, 220, 230)), 0, acciones.Height - 1, acciones.Width, acciones.Height - 1);
-            var btnEditar = AppTheme.MakeButton("✏  Modificar", AppTheme.Info, 120, 32);
-            var btnEliminar = AppTheme.MakeButton("🗑  Eliminar", Color.FromArgb(220, 38, 38), 120, 32);
+            btnEditar = AppTheme.MakeButton("✏  Modificar", AppTheme.Info, 120, 32);
+            btnEliminar = AppTheme.MakeButton("🗑  Eliminar", Color.FromArgb(220, 38, 38), 120, 32);
+            lblNota = new Label { AutoSize = true, Font = AppTheme.FontSmall, ForeColor = AppTheme.TextMuted, Margin = new Padding(12, 9, 0, 0) };
             btnEditar.Margin = new Padding(0, 0, 8, 0);
             btnEditar.Click += (s, e) => EditarSeleccionada();
             btnEliminar.Click += (s, e) => EliminarSeleccionada();
             var flow = new FlowLayoutPanel { Dock = DockStyle.Fill, WrapContents = false };
-            flow.Controls.Add(btnEditar); flow.Controls.Add(btnEliminar);
+            flow.Controls.Add(btnEditar); flow.Controls.Add(btnEliminar); flow.Controls.Add(lblNota);
             acciones.Controls.Add(flow);
 
             grid = AppTheme.MakeGrid();
@@ -65,9 +67,11 @@ namespace KawaSysWF.Forms.Ventas
             grid.Columns.Add("Marca", "Marca"); grid.Columns.Add("Modelo", "Modelo");
             grid.Columns.Add("Cant", "Cant."); grid.Columns.Add("Total", "Total");
             grid.Columns.Add("Pago", "Forma de Pago");
+            grid.Columns.Add("Factura", "Factura");
             grid.Columns["Id"].FillWeight = 35; grid.Columns["Cant"].FillWeight = 40;
             grid.Columns["Total"].DefaultCellStyle.Format = "C2";
             grid.CellDoubleClick += (s, e) => { if (e.RowIndex >= 0) EditarSeleccionada(); };
+            grid.SelectionChanged += (s, e) => ActualizarAcciones();
 
             Controls.Add(grid);
             Controls.Add(acciones);
@@ -93,6 +97,7 @@ namespace KawaSysWF.Forms.Ventas
                 MessageBox.Show("Seleccioná una venta de la lista.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+            if (v.NroFactura != null) return;   // el doble clic no abre la edición de una venta facturada
             using var dlg = new EditarVentaForm(v);
             if (dlg.ShowDialog() == DialogResult.OK) LoadData();
         }
@@ -126,11 +131,28 @@ namespace KawaSysWF.Forms.Ventas
             decimal total = 0;
             foreach (var v in ventas)
             {
-                int i = grid.Rows.Add($"#{v.Id}", v.Fecha, v.SucursalNombre, v.ClienteNombre, v.Marca, v.Modelo, v.Cantidad, v.Total, v.FormaPago);
+                int i = grid.Rows.Add($"#{v.Id}", v.Fecha, v.SucursalNombre, v.ClienteNombre, v.Marca, v.Modelo, v.Cantidad, v.Total, v.FormaPago,
+                    v.NroFactura.HasValue ? $"N° {v.NroFactura:D8}" : "Sin facturar");
                 grid.Rows[i].Tag = v;
+                grid.Rows[i].Cells["Factura"].Style.ForeColor = v.NroFactura.HasValue ? AppTheme.Success : AppTheme.Warning;
                 total += v.Total;
             }
             lblTotal.Text = $"Total: {total:C2}  ({ventas.Count} registros)";
+            ActualizarAcciones();
+        }
+
+        // Una venta facturada ya fue efectuada: no se modifica ni se elimina (solo las "Sin facturar").
+        private void ActualizarAcciones()
+        {
+            if (btnEditar == null || btnEliminar == null) return;
+            var v = GetSeleccionada();
+            bool facturada = v?.NroFactura != null;
+            btnEditar.Enabled = btnEliminar.Enabled = !facturada;
+            btnEditar.BackColor = facturada ? Color.FromArgb(170, 175, 190) : AppTheme.Info;
+            btnEliminar.BackColor = facturada ? Color.FromArgb(170, 175, 190) : Color.FromArgb(220, 38, 38);
+            lblNota.Text = facturada
+                ? $"🔒  Venta ya facturada (N° {v!.NroFactura:D8}): no se puede modificar ni eliminar."
+                : "";
         }
     }
 

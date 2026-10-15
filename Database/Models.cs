@@ -42,6 +42,8 @@ namespace KawaSysWF.Database
         public decimal Total { get; set; }
         public string FormaPago { get; set; } = "";
         public string Observaciones { get; set; } = "";
+        /// <summary>N° de factura emitida para esta venta (null si todavía no fue facturada).</summary>
+        public int? NroFactura { get; set; }
     }
 
     public class ModeloFaltante
