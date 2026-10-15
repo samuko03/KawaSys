@@ -141,7 +141,8 @@ namespace KawaSysWF.Database
             return list;
         }
 
-        public static void SaveVenta(Venta v)
+        /// <summary>Registra la venta y su factura. Devuelve el id de la factura generada.</summary>
+        public static int SaveVenta(Venta v)
         {
             using var conn = DBHelper.GetConnection();
             using var tx = conn.BeginTransaction();
@@ -161,8 +162,9 @@ namespace KawaSysWF.Database
             cmd.Parameters.AddWithValue("@ob", v.Observaciones);
             int ventaId = (int)(long)cmd.ExecuteScalar()!;
             // KAWA-43: cada venta registrada genera su factura (y su cobro si es al contado).
-            FacturacionRepository.GenerarEnTx(conn, tx, ventaId, debitarCC: true);
+            int facturaId = FacturacionRepository.GenerarEnTx(conn, tx, ventaId, debitarCC: true);
             tx.Commit();
+            return facturaId;
         }
 
         // Una factura emitida ya fue efectuada: la venta facturada no se modifica ni se elimina.

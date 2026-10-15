@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS cobros (
             {
                 CcEnTx(conn, tx, clienteId!.Value, "debito", (decimal)total, $"Factura {nro:D8} — Venta #{ventaId}");
             }
-            return facturaId;
+            return facturaId;   // la usa SaveVenta para devolver la factura recién creada
         }
 
         /// <summary>Factura las ventas que todavía no tienen factura. Devuelve cuántas creó.</summary>
@@ -177,7 +177,8 @@ CREATE TABLE IF NOT EXISTS cobros (
                    COALESCE(TRIM(c.nombre||' '||COALESCE(c.apellido,'')),'Consumidor final'),
                    COALESCE(s.nombre,''), f.nro_factura, f.fecha, f.tipo, f.total,
                    COALESCE((SELECT SUM(monto) FROM cobros WHERE factura_id=f.id),0),
-                   f.estado, f.a_cuenta
+                   f.estado, f.a_cuenta,
+                   COALESCE(c.dni_cuit,''), COALESCE(c.direccion,''), COALESCE(c.email,''), COALESCE(v.forma_pago,'')
             FROM facturas f
             LEFT JOIN clientes c ON c.id=f.cliente_id
             LEFT JOIN ventas v ON v.id=f.venta_id
@@ -188,7 +189,8 @@ CREATE TABLE IF NOT EXISTS cobros (
             Id = r.GetInt32(0), VentaId = r.GetInt32(1), ClienteId = r.IsDBNull(2) ? null : r.GetInt32(2),
             ClienteNombre = r.GetString(3), SucursalNombre = r.GetString(4), NroFactura = r.GetInt32(5),
             Fecha = r.GetString(6), Tipo = r.GetString(7), Total = (decimal)r.GetDouble(8),
-            Cobrado = (decimal)r.GetDouble(9), Estado = r.GetString(10), ACuenta = r.GetInt32(11) == 1
+            Cobrado = (decimal)r.GetDouble(9), Estado = r.GetString(10), ACuenta = r.GetInt32(11) == 1,
+            ClienteDoc = r.GetString(12), ClienteDireccion = r.GetString(13), ClienteEmail = r.GetString(14), FormaPago = r.GetString(15)
         };
 
         public static List<Factura> Listar(int? clienteId = null, int? sucursalId = null,

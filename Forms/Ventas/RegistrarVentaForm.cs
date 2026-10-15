@@ -101,7 +101,7 @@ namespace KawaSysWF.Forms.Ventas
             var cli = (Cliente?)cmbCliente.SelectedItem;
             if (cmbPago.SelectedItem?.ToString() == "Cuenta corriente" && (cli == null || cli.Id == 0))
             { MessageBox.Show("Una venta en Cuenta corriente necesita un cliente. Elegí un cliente o cambiá la forma de pago.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-            Repository.SaveVenta(new Venta
+            int facturaId = Repository.SaveVenta(new Venta
             {
                 Fecha = DateTime.Today.ToString("yyyy-MM-dd"),
                 SucursalId = suc?.Id ?? 0,
@@ -114,8 +114,18 @@ namespace KawaSysWF.Forms.Ventas
                 FormaPago = cmbPago.SelectedItem?.ToString() ?? "",
                 Observaciones = txtObs.Text.Trim()
             });
-            MessageBox.Show("✅  Venta registrada exitosamente.", "KawaSys", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            var factura = FacturacionRepository.Obtener(facturaId);
+            MessageBox.Show($"✅  Venta registrada exitosamente.\nSe generó la factura N° {factura?.NroTexto}. Se abrirá el PDF para descargarla o imprimirla.",
+                "KawaSys", MessageBoxButtons.OK, MessageBoxIcon.Information);
             txtMarca.Clear(); txtModelo.Clear(); txtPrecio.Clear(); txtObs.Clear(); nudCantidad.Value = 1;
+
+            // La venta ya quedó guardada; si el PDF falla, se avisa y se puede volver a emitir desde Facturas.
+            try { UI.Comprobantes.AbrirFacturaPorId(facturaId); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("La venta y su factura se guardaron, pero no se pudo generar el PDF: " + ex.Message +
+                    "\nPodés volver a emitirlo desde Facturas > Emitir comprobante.", "PDF no generado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }

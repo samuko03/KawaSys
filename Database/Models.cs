@@ -193,6 +193,10 @@ namespace KawaSysWF.Database
         public decimal Cobrado { get; set; }
         public string Estado { get; set; } = "emitida";
         public bool ACuenta { get; set; }
+        public string ClienteDoc { get; set; } = "";
+        public string ClienteDireccion { get; set; } = "";
+        public string ClienteEmail { get; set; } = "";
+        public string FormaPago { get; set; } = "";
         public decimal Pendiente => Total - Cobrado;
         public string NroTexto => $"{NroFactura:D8}";
     }

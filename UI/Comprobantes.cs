@@ -26,17 +26,19 @@ namespace KawaSysWF.UI
         private static string M(decimal d) => d.ToString("C2");
         private static string Cap(string s) => s.Length == 0 ? s : char.ToUpper(s[0]) + s.Substring(1);
 
-        public static void AbrirFactura(Factura f, IEnumerable<FacturaLinea> lineas)
+        /// <summary>Genera el PDF de la factura (se guarda en Documentos\KawaSys\Facturas) y lo abre. Devuelve la ruta.</summary>
+        public static string AbrirFactura(Factura f, IEnumerable<FacturaLinea> lineas)
         {
-            var sb = new StringBuilder($"<html><head><meta charset='utf-8'>{Estilo}</head><body>");
-            sb.Append($"<div class='head'><h1>KawaSys — Factura {H(f.Tipo)}</h1><div>N° {f.NroTexto} · {H(f.Fecha)} · Estado: {H(Cap(f.Estado))}</div></div>");
-            sb.Append($"<p><b>Cliente:</b> {H(f.ClienteNombre)}<br><b>Sucursal:</b> {H(f.SucursalNombre)}</p>");
-            sb.Append("<table><tr><th>Descripción</th><th class='n'>Cant.</th><th class='n'>Precio unit.</th><th class='n'>Subtotal</th></tr>");
-            foreach (var l in lineas)
-                sb.Append($"<tr><td>{H(l.Descripcion)}</td><td class='n'>{l.Cantidad}</td><td class='n'>{M(l.PrecioUnitario)}</td><td class='n'>{M(l.SubTotal)}</td></tr>");
-            sb.Append($"</table><div class='tot'>Total: {M(f.Total)}</div>");
-            sb.Append($"<p>Cobrado: {M(f.Cobrado)} · Pendiente: {M(f.Pendiente)}</p></body></html>");
-            Abrir($"factura-{f.NroTexto}.html", sb.ToString());
+            var ruta = FacturaPdf.Generar(f, lineas.ToList(), FacturacionRepository.Cobros(f.Id));
+            FacturaPdf.Abrir(ruta);
+            return ruta;
+        }
+
+        /// <summary>Genera y abre el PDF de una factura a partir de su id (p. ej. la recién creada al registrar una venta).</summary>
+        public static string AbrirFacturaPorId(int facturaId)
+        {
+            var f = FacturacionRepository.Obtener(facturaId) ?? throw new InvalidOperationException("La factura no existe.");
+            return AbrirFactura(f, FacturacionRepository.Detalle(facturaId));
         }
 
         public static void AbrirRecibo(Cobro c, Factura f)
@@ -62,6 +64,7 @@ namespace KawaSysWF.UI
 
         private static void Abrir(string nombre, string html)
         {
+            if (Environment.GetEnvironmentVariable("KAWA_NO_ABRIR") == "1") return;   // pruebas automáticas
             var dir = Path.Combine(Path.GetTempPath(), "KawaSys");
             Directory.CreateDirectory(dir);
             var ruta = Path.Combine(dir, nombre);
