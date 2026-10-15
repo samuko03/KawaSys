@@ -32,11 +32,11 @@ namespace KawaSysWF.Forms.Ventas
             filter.Controls.Add(cmbSucursal); x += 220;
 
             filter.Controls.Add(new Label { Text = "Desde:", Left = x, Top = 12, AutoSize = true, Font = AppTheme.FontBold });
-            dtDesde = new DateTimePicker { Left = x, Top = 32, Width = 140, Format = DateTimePickerFormat.Short, Value = DateTime.Today.AddMonths(-1) };
+            dtDesde = new DateTimePicker { Left = x, Top = 32, Width = 140, Format = DateTimePickerFormat.Short, Value = DateTime.Today.AddMonths(-1), ShowCheckBox = true, Checked = false };
             filter.Controls.Add(dtDesde); x += 160;
 
             filter.Controls.Add(new Label { Text = "Hasta:", Left = x, Top = 12, AutoSize = true, Font = AppTheme.FontBold });
-            dtHasta = new DateTimePicker { Left = x, Top = 32, Width = 140, Format = DateTimePickerFormat.Short, Value = DateTime.Today };
+            dtHasta = new DateTimePicker { Left = x, Top = 32, Width = 140, Format = DateTimePickerFormat.Short, Value = DateTime.Today, ShowCheckBox = true, Checked = false };
             filter.Controls.Add(dtHasta); x += 160;
 
             var btnBuscar = AppTheme.MakeButton("🔍 Buscar", AppTheme.Accent, 110, 30);
@@ -73,6 +73,11 @@ namespace KawaSysWF.Forms.Ventas
             Controls.Add(acciones);
             Controls.Add(filter);
             LoadData();
+
+            // El filtro se aplica al instante, sin tener que pulsar Buscar.
+            cmbSucursal.SelectedIndexChanged += (s, e) => LoadData();
+            dtDesde.ValueChanged += (s, e) => LoadData();
+            dtHasta.ValueChanged += (s, e) => LoadData();
         }
 
         private Venta? GetSeleccionada()
@@ -113,8 +118,10 @@ namespace KawaSysWF.Forms.Ventas
         private void LoadData()
         {
             var suc = (Sucursal?)cmbSucursal.SelectedItem;
+            // Las fechas son opcionales: sin tildar la casilla no se filtra por ese extremo.
             var ventas = Repository.GetVentas(suc?.Id == 0 ? null : suc?.Id,
-                dtDesde.Value.ToString("yyyy-MM-dd"), dtHasta.Value.ToString("yyyy-MM-dd"));
+                dtDesde.Checked ? dtDesde.Value.ToString("yyyy-MM-dd") : null,
+                dtHasta.Checked ? dtHasta.Value.ToString("yyyy-MM-dd") : null);
             grid.Rows.Clear();
             decimal total = 0;
             foreach (var v in ventas)
@@ -199,13 +206,14 @@ namespace KawaSysWF.Forms.Ventas
             var btnGuardar = AppTheme.MakeButton("✓  Guardar Cambios", AppTheme.Accent, 200, 40);
             btnGuardar.Left = 16; btnGuardar.Top = y; btnGuardar.Click += DoSave;
             Controls.Add(btnGuardar);
+            ClientSize = new Size(ClientSize.Width, btnGuardar.Bottom + 24);   // que el botón Guardar quede siempre visible
 
             UpdateTotal();
         }
 
         private void UpdateTotal()
         {
-            if (decimal.TryParse(txtPrecio.Text, out decimal p))
+            if (AppTheme.TryParseMonto(txtPrecio.Text, out decimal p))
                 lblTotal.Text = $"Total: {(p * (decimal)nudCantidad.Value):C2}";
             else
                 lblTotal.Text = "Total: $0,00";
@@ -215,11 +223,13 @@ namespace KawaSysWF.Forms.Ventas
         {
             if (string.IsNullOrWhiteSpace(txtModelo.Text) || string.IsNullOrWhiteSpace(txtPrecio.Text) || cmbPago.SelectedItem == null)
             { MessageBox.Show("Completá los campos obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-            if (!decimal.TryParse(txtPrecio.Text, out decimal precio) || precio <= 0)
-            { MessageBox.Show("El precio debe ser un número mayor a 0.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            if (!AppTheme.TryParseMonto(txtPrecio.Text, out decimal precio) || precio <= 0)
+            { MessageBox.Show("El precio debe ser un número mayor a 0 (por ejemplo 285000 o 285000,50).", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
             var suc = (Sucursal?)cmbSucursal.SelectedItem;
             var cli = (Cliente?)cmbCliente.SelectedItem;
+            if (cmbPago.SelectedItem?.ToString() == "Cuenta corriente" && (cli == null || cli.Id == 0))
+            { MessageBox.Show("Una venta en Cuenta corriente necesita un cliente. Elegí un cliente o cambiá la forma de pago.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
             try { Repository.UpdateVenta(new Venta
             {
                 Id = _v.Id,

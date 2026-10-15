@@ -85,6 +85,7 @@ namespace KawaSysWF.Forms.Facturacion
             Controls.Add(bottom);
             Controls.Add(filter);
             LoadData();
+            cmbCliente.SelectedIndexChanged += (s, e) => LoadData();   // filtro inmediato por cliente
         }
 
         private Factura? Seleccion => grid.SelectedRows.Count == 0 ? null : grid.SelectedRows[0].Tag as Factura;

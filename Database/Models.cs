@@ -103,7 +103,15 @@ namespace KawaSysWF.Database
         public string Fecha { get; set; } = "";
         public string Descripcion { get; set; } = "";
         public string Estado { get; set; } = "pendiente";
+        public string Items { get; set; } = "";
         public override string ToString() => $"SC-{Id:D3} | {Fecha} | {Descripcion}";
+    }
+
+    public class ItemSolicitud
+    {
+        public string Marca { get; set; } = "";
+        public string Modelo { get; set; } = "";
+        public int Cantidad { get; set; } = 1;
     }
 
     public class SolicitudCotizacion

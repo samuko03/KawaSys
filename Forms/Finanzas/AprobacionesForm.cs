@@ -91,7 +91,8 @@ namespace KawaSysWF.Forms.Finanzas
             var btnMod = AppTheme.MakeButton("✏ Modificar", AppTheme.Info, 120, 32);
             btnMod.Click += (s, e) =>
             {
-                if (grid.SelectedRows.Count == 0 || grid.SelectedRows[0].Tag is not Operacion op) return;
+                if (grid.SelectedRows.Count == 0 || grid.SelectedRows[0].Tag is not Operacion op)
+                { MessageBox.Show("Seleccioná una operación.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
                 var form = new Form { Text = $"Modificar Op. #{op.Id}", Size = new Size(400, 200), StartPosition = FormStartPosition.CenterParent, FormBorderStyle = FormBorderStyle.FixedDialog };
                 var cmbRes = AppTheme.MakeCombo(180); cmbRes.Items.AddRange(new object[] { "aprobada", "rechazada" }); cmbRes.SelectedItem = op.Resultado;
                 var txtJ = AppTheme.MakeTextBox(280, true); txtJ.Text = op.Justificacion;
@@ -138,13 +139,15 @@ namespace KawaSysWF.Forms.Finanzas
             var cmbMes = AppTheme.MakeCombo(130); cmbMes.Items.Add("Todos");
             foreach (var m in new[] { "Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre" }) cmbMes.Items.Add(m);
             cmbMes.SelectedIndex = 0;
-            var cmbAnio = AppTheme.MakeCombo(90); foreach (int y in new[] { 2023, 2024, 2025, 2026 }) cmbAnio.Items.Add(y); cmbAnio.SelectedItem = DateTime.Today.Year;
+            var cmbAnio = AppTheme.MakeCombo(90); cmbAnio.Items.Add("Todos");
+            for (int y = 2023; y <= DateTime.Today.Year + 1; y++) cmbAnio.Items.Add(y);
+            cmbAnio.SelectedIndex = 0;   // "Todos": los datos pueden ser de años anteriores
 
             filter.Controls.Add(new Label { Text = "Mes:", Left = 10, Top = 12, AutoSize = true, Font = AppTheme.FontBold });
             cmbMes.Left = 10; cmbMes.Top = 32; filter.Controls.Add(cmbMes);
             filter.Controls.Add(new Label { Text = "Año:", Left = 160, Top = 12, AutoSize = true, Font = AppTheme.FontBold });
             cmbAnio.Left = 160; cmbAnio.Top = 32; filter.Controls.Add(cmbAnio);
-            var btn = AppTheme.MakeButton("🔍 Ver", AppTheme.Accent, 90, 30); btn.Left = 260; btn.Top = 30; btn.Click += (s, e) => LoadGrid(cmbMes.SelectedIndex, (int?)cmbAnio.SelectedItem); filter.Controls.Add(btn);
+            var btn = AppTheme.MakeButton("🔍 Ver", AppTheme.Accent, 90, 30); btn.Left = 260; btn.Top = 30; btn.Click += (s, e) => LoadGrid(cmbMes.SelectedIndex, cmbAnio.SelectedItem is int a ? a : (int?)null); filter.Controls.Add(btn);
             lblStats = new Label { Left = 370, Top = 22, AutoSize = true, Font = AppTheme.FontBold, ForeColor = AppTheme.Primary }; filter.Controls.Add(lblStats);
 
             grid = AppTheme.MakeGrid();
@@ -155,7 +158,9 @@ namespace KawaSysWF.Forms.Finanzas
             grid.Columns["Monto"].DefaultCellStyle.Format = "C2";
 
             Controls.Add(grid); Controls.Add(filter);
-            LoadGrid(0, DateTime.Today.Year);
+            LoadGrid(0, null);
+            cmbMes.SelectedIndexChanged += (s, e) => LoadGrid(cmbMes.SelectedIndex, cmbAnio.SelectedItem is int a ? a : (int?)null);
+            cmbAnio.SelectedIndexChanged += (s, e) => LoadGrid(cmbMes.SelectedIndex, cmbAnio.SelectedItem is int a ? a : (int?)null);
         }
 
         private void LoadGrid(int mesIdx, int? anio)

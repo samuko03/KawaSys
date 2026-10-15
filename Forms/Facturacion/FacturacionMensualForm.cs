@@ -57,6 +57,8 @@ namespace KawaSysWF.Forms.Facturacion
             Controls.Add(grid);
             Controls.Add(filter);
             LoadData();
+            cmbMes.SelectedIndexChanged += (s, e) => LoadData();
+            nudAnio.ValueChanged += (s, e) => LoadData();
         }
 
         private void LoadData()

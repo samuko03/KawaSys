@@ -39,6 +39,11 @@ namespace KawaSysWF.Forms.Proveedores
             Controls.Add(grid);
             Controls.Add(filter);
             LoadGrid();
+
+            // La búsqueda se actualiza mientras escribís o cambiás el tipo.
+            txtMarca.TextChanged += (s, e) => LoadGrid();
+            txtModelo.TextChanged += (s, e) => LoadGrid();
+            cmbTipo.SelectedIndexChanged += (s, e) => LoadGrid();
         }
 
         private void LoadGrid()

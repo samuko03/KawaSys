@@ -32,6 +32,7 @@ namespace KawaSysWF.Forms.Compras
             var itemsPanel = new Panel { Left = 0, Top = y, Width = 300, Height = 160, BackColor = Color.FromArgb(245, 247, 250), AutoScroll = true };
             left.Controls.Add(itemsPanel);
             int iy = 4;
+            var filas = new System.Collections.Generic.List<(TextBox marca, TextBox modelo, NumericUpDown cant)>();
 
             void AddItemRow()
             {
@@ -39,8 +40,13 @@ namespace KawaSysWF.Forms.Compras
                 var modelo = new TextBox { Left = 98, Top = iy, Width = 110, Height = 24, Font = AppTheme.FontSmall, BorderStyle = BorderStyle.FixedSingle, PlaceholderText = "Modelo" };
                 var cant = new NumericUpDown { Left = 212, Top = iy, Width = 60, Height = 24, Minimum = 1, Maximum = 999, Value = 1, Font = AppTheme.FontSmall };
                 itemsPanel.Controls.AddRange(new Control[] { marca, modelo, cant });
+                filas.Add((marca, modelo, cant));
                 iy += 28;
                 itemsPanel.AutoScrollMinSize = new System.Drawing.Size(300, iy + 10);
+            }
+            void ReiniciarItems()
+            {
+                itemsPanel.Controls.Clear(); filas.Clear(); iy = 4; AddItemRow();
             }
             AddItemRow();
 
@@ -55,9 +61,14 @@ namespace KawaSysWF.Forms.Compras
             btn.Click += (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(txtDesc.Text)) { MessageBox.Show("Ingresá una descripción.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                int solId = Repository.SaveSolicitudCompra(new SolicitudCompra { Fecha = DateTime.Today.ToString("yyyy-MM-dd"), Descripcion = txtDesc.Text.Trim() });
-                MessageBox.Show($"✅  Solicitud #SC-{solId:D3} registrada.", "KawaSys", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                txtDesc.Clear(); LoadGrid();
+                var items = new System.Collections.Generic.List<ItemSolicitud>();
+                foreach (var (marca, modelo, cant) in filas)
+                    if (!string.IsNullOrWhiteSpace(modelo.Text))
+                        items.Add(new ItemSolicitud { Marca = marca.Text.Trim(), Modelo = modelo.Text.Trim(), Cantidad = (int)cant.Value });
+                if (items.Count == 0) { MessageBox.Show("Cargá al menos un ítem con su modelo.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                int solId = Repository.SaveSolicitudCompra(new SolicitudCompra { Fecha = DateTime.Today.ToString("yyyy-MM-dd"), Descripcion = txtDesc.Text.Trim() }, items);
+                MessageBox.Show($"✅  Solicitud #SC-{solId:D3} registrada con {items.Count} ítem(s).", "KawaSys", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                txtDesc.Clear(); ReiniciarItems(); LoadGrid();
             };
             left.Controls.Add(btn);
 
@@ -65,7 +76,7 @@ namespace KawaSysWF.Forms.Compras
             grid = AppTheme.MakeGrid();
             grid.Columns.Add("Id", "#");
             grid.Columns["Id"].Visible = false; grid.Columns.Add("Fecha", "Fecha");
-            grid.Columns.Add("Desc", "Descripción"); grid.Columns.Add("Estado", "Estado");
+            grid.Columns.Add("Desc", "Descripción"); grid.Columns.Add("Items", "Ítems"); grid.Columns.Add("Estado", "Estado");
             right.Controls.Add(grid);
             Controls.Add(right); Controls.Add(left);
             LoadGrid();
@@ -75,7 +86,7 @@ namespace KawaSysWF.Forms.Compras
         {
             grid.Rows.Clear();
             foreach (var s in Repository.GetSolicitudesCompra())
-                grid.Rows.Add($"SC-{s.Id:D3}", s.Fecha, s.Descripcion, s.Estado.ToUpper());
+                grid.Rows.Add($"SC-{s.Id:D3}", s.Fecha, s.Descripcion, s.Items, s.Estado.ToUpper());
         }
     }
 }

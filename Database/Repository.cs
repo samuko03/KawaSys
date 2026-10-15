@@ -104,8 +104,9 @@ namespace KawaSysWF.Database
                 cmd.CommandText = "INSERT INTO sucursales(nombre,direccion,ciudad,telefono,email) VALUES(@n,@d,@c,@t,@e)";
             else
             {
-                cmd.CommandText = "UPDATE sucursales SET nombre=@n,direccion=@d,ciudad=@c,telefono=@t,email=@e WHERE id=@id";
+                cmd.CommandText = "UPDATE sucursales SET nombre=@n,direccion=@d,ciudad=@c,telefono=@t,email=@e,activa=@a WHERE id=@id";
                 cmd.Parameters.AddWithValue("@id", s.Id);
+                cmd.Parameters.AddWithValue("@a", s.Activa ? 1 : 0);
             }
             cmd.Parameters.AddWithValue("@n", s.Nombre);
             cmd.Parameters.AddWithValue("@d", s.Direccion);
@@ -308,8 +309,50 @@ namespace KawaSysWF.Database
 
         public static void DeletePedidoCliente(int id) => DeleteById("pedidos_clientes", id);
         public static void DeleteEnvio(int id)          => DeleteById("envios_listados", id);
-        public static void DeleteProveedor(int id)      => DeleteById("proveedores", id);
-        public static void DeleteSucursal(int id)       => DeleteById("sucursales", id);
+        /// <summary>
+        /// Elimina el proveedor. Si ya tiene cotizaciones queda inactivo (baja lógica) para conservar el historial.
+        /// Devuelve true si se dio de baja lógica en lugar de borrarse.
+        /// </summary>
+        public static bool DeleteProveedor(int id)
+        {
+            if (!TieneReferencias(id, ("cotizaciones", "proveedor_id"))) { DeleteById("proveedores", id); return false; }
+            using var conn = DBHelper.GetConnection();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = "UPDATE proveedores SET activo=0 WHERE id=@id";
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.ExecuteNonQuery();
+            return true;
+        }
+
+        /// <summary>
+        /// Elimina la sucursal. Si ya tiene ventas, usuarios u otros movimientos queda inactiva (baja lógica).
+        /// Devuelve true si se dio de baja lógica en lugar de borrarse.
+        /// </summary>
+        public static bool DeleteSucursal(int id)
+        {
+            if (!TieneReferencias(id, ("ventas", "sucursal_id"), ("usuarios", "sucursal_id"), ("modelos_faltantes", "sucursal_id"),
+                                      ("pedidos_clientes", "sucursal_id"), ("envios_listados", "sucursal_id")))
+            { DeleteById("sucursales", id); return false; }
+            using var conn = DBHelper.GetConnection();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = "UPDATE sucursales SET activa=0 WHERE id=@id";
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.ExecuteNonQuery();
+            return true;
+        }
+
+        private static bool TieneReferencias(int id, params (string tabla, string columna)[] refs)
+        {
+            using var conn = DBHelper.GetConnection();
+            foreach (var (tabla, columna) in refs)
+            {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = $"SELECT COUNT(*) FROM {tabla} WHERE {columna}=@id";
+                cmd.Parameters.AddWithValue("@id", id);
+                if ((long)cmd.ExecuteScalar()! > 0) return true;
+            }
+            return false;
+        }
         public static void DeleteUsuario(int id)        => DeleteById("usuarios", id);
 
         public static void DeleteCliente(int id)
@@ -428,21 +471,41 @@ namespace KawaSysWF.Database
             var list = new List<SolicitudCompra>();
             using var conn = DBHelper.GetConnection();
             var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT id,fecha,COALESCE(descripcion,''),COALESCE(estado,'pendiente') FROM solicitudes_compra ORDER BY id DESC";
+            cmd.CommandText = @"SELECT s.id,s.fecha,COALESCE(s.descripcion,''),COALESCE(s.estado,'pendiente'),
+                    COALESCE((SELECT group_concat(TRIM(COALESCE(i.marca,'')||' '||COALESCE(i.modelo,''))||' x'||i.cantidad, ', ')
+                              FROM items_solicitud_compra i WHERE i.solicitud_id=s.id),'')
+                FROM solicitudes_compra s ORDER BY s.id DESC";
             using var r = cmd.ExecuteReader();
             while (r.Read())
-                list.Add(new SolicitudCompra { Id=r.GetInt32(0), Fecha=r.GetString(1), Descripcion=r.GetString(2), Estado=r.GetString(3) });
+                list.Add(new SolicitudCompra { Id=r.GetInt32(0), Fecha=r.GetString(1), Descripcion=r.GetString(2), Estado=r.GetString(3), Items=r.GetString(4) });
             return list;
         }
 
-        public static int SaveSolicitudCompra(SolicitudCompra s)
+        /// <summary>Registra la solicitud de compra junto con sus ítems (marca, modelo, cantidad) en una sola transacción.</summary>
+        public static int SaveSolicitudCompra(SolicitudCompra s, IEnumerable<ItemSolicitud>? items = null)
         {
             using var conn = DBHelper.GetConnection();
+            using var tx = conn.BeginTransaction();
             var cmd = conn.CreateCommand();
+            cmd.Transaction = tx;
             cmd.CommandText = "INSERT INTO solicitudes_compra(fecha,descripcion) VALUES(@f,@d); SELECT last_insert_rowid();";
             cmd.Parameters.AddWithValue("@f", s.Fecha);
             cmd.Parameters.AddWithValue("@d", s.Descripcion);
-            return (int)(long)cmd.ExecuteScalar()!;
+            int id = (int)(long)cmd.ExecuteScalar()!;
+
+            if (items != null)
+                foreach (var it in items)
+                {
+                    cmd.Parameters.Clear();
+                    cmd.CommandText = "INSERT INTO items_solicitud_compra(solicitud_id,marca,modelo,cantidad) VALUES(@s,@ma,@mo,@c)";
+                    cmd.Parameters.AddWithValue("@s", id);
+                    cmd.Parameters.AddWithValue("@ma", it.Marca);
+                    cmd.Parameters.AddWithValue("@mo", it.Modelo);
+                    cmd.Parameters.AddWithValue("@c", it.Cantidad);
+                    cmd.ExecuteNonQuery();
+                }
+            tx.Commit();
+            return id;
         }
 
         // ── COTIZACIONES ──────────────────────────────────────────
@@ -539,6 +602,7 @@ namespace KawaSysWF.Database
             cmd.CommandText = "INSERT INTO operaciones(orden_id,descripcion,monto,fecha) VALUES(@oid,@d,@m,@f)";
             cmd.Parameters.AddWithValue("@oid", ordenId);
             cmd.Parameters.AddWithValue("@d", $"Orden de compra #OC-{ordenId:D3}");
+            cmd.ExecuteNonQuery();   // la operación pendiente es la que aparece en Finanzas > Aprobaciones
             tx.Commit();
         }
 
@@ -624,6 +688,17 @@ namespace KawaSysWF.Database
                 cmd.Parameters.AddWithValue("@e", c.Email); cmd.Parameters.AddWithValue("@dir", c.Direccion);
                 cmd.Parameters.AddWithValue("@id", c.Id);
                 cmd.ExecuteNonQuery();
+
+                // El límite de crédito también se puede modificar (si el cliente no tenía cuenta corriente, se crea).
+                cmd.Parameters.Clear();
+                cmd.CommandText = "UPDATE cuentas_corrientes SET limite_credito=@lc WHERE cliente_id=@id";
+                cmd.Parameters.AddWithValue("@lc", (double)c.LimiteCredito);
+                cmd.Parameters.AddWithValue("@id", c.Id);
+                if (cmd.ExecuteNonQuery() == 0)
+                {
+                    cmd.CommandText = "INSERT INTO cuentas_corrientes(cliente_id,saldo,limite_credito) VALUES(@id,0,@lc)";
+                    cmd.ExecuteNonQuery();
+                }
             }
             tx.Commit();
         }

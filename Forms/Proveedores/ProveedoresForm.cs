@@ -34,7 +34,11 @@ namespace KawaSysWF.Forms.Proveedores
                 if (grid.SelectedRows.Count > 0 && grid.SelectedRows[0].Tag is Proveedor p)
                 {
                     if (MessageBox.Show($"¿Eliminar el proveedor \"{p.RazonSocial}\"?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                    { Repository.DeleteProveedor(p.Id); LoadGrid(); }
+                    {
+                        bool baja = Repository.DeleteProveedor(p.Id);
+                        if (baja) MessageBox.Show($"El proveedor \"{p.RazonSocial}\" ya tiene cotizaciones registradas, por eso no se borró: quedó dado de baja y se conserva el historial.", "Proveedor dado de baja", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadGrid();
+                    }
                 }
                 else MessageBox.Show("Seleccioná un proveedor.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             };
@@ -81,7 +85,7 @@ namespace KawaSysWF.Forms.Proveedores
         private void Build()
         {
             Text = _p == null ? "Nuevo Proveedor" : $"Editar: {_p.RazonSocial}";
-            Size = new Size(480, 480); StartPosition = FormStartPosition.CenterParent;
+            Size = new Size(480, 540); StartPosition = FormStartPosition.CenterParent;
             FormBorderStyle = FormBorderStyle.FixedDialog; MaximizeBox = false;
             BackColor = AppTheme.White; Padding = new Padding(20);
 
@@ -113,6 +117,7 @@ namespace KawaSysWF.Forms.Proveedores
                 Close();
             };
             Controls.Add(btn);
+            ClientSize = new Size(ClientSize.Width, btn.Bottom + 24);   // que el botón Guardar quede siempre visible
         }
     }
 }

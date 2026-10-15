@@ -34,6 +34,8 @@ namespace KawaSysWF.Forms.Sistema
                 if (grid.SelectedRows.Count > 0 && grid.SelectedRows[0].Tag is Usuario u)
                 {
                     if (u.Id == _user.Id) { MessageBox.Show("No podés eliminar tu propio usuario mientras estás conectado.", "No permitido", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                    if (u.Rol == "sistema" && u.Activo && Repository.GetUsuarios().FindAll(x => x.Rol == "sistema" && x.Activo).Count <= 1)
+                    { MessageBox.Show("No se puede eliminar el único usuario administrador (rol sistema).", "No permitido", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                     if (MessageBox.Show($"¿Eliminar el usuario \"{u.Username}\" ({u.NombreCompleto})?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     { Repository.DeleteUsuario(u.Id); LoadGrid(); }
                 }
@@ -83,6 +85,7 @@ namespace KawaSysWF.Forms.Sistema
             var txtApellido = AppTheme.MakeTextBox(200); txtApellido.Text = _u?.Apellido ?? "";
             var txtEmail    = AppTheme.MakeTextBox(400); txtEmail.Text = _u?.Email ?? "";
             var txtUsername = AppTheme.MakeTextBox(180); txtUsername.Text = _u?.Username ?? "";
+            if (_u != null) { txtUsername.ReadOnly = true; txtUsername.BackColor = Color.FromArgb(240, 240, 244); }   // el nombre de usuario no se cambia al editar
             var txtPassword = AppTheme.MakeTextBox(180); txtPassword.PasswordChar = '●';
             var cmbRol      = AppTheme.MakeCombo(180); cmbRol.Items.AddRange(new object[] { "ventas", "compras", "finanzas", "sistema" }); cmbRol.SelectedItem = _u?.Rol ?? "ventas";
             var cmbSuc      = AppTheme.MakeCombo(200); cmbSuc.Items.Add(new Sucursal { Id = 0, Nombre = "Sin sucursal" });
@@ -110,10 +113,17 @@ namespace KawaSysWF.Forms.Sistema
             btn.Left = 16; btn.Top = y;
             btn.Click += (s, e) =>
             {
-                if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtUsername.Text)) { MessageBox.Show("Nombre y usuario son obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (string.IsNullOrWhiteSpace(txtNombre.Text) || string.IsNullOrWhiteSpace(txtApellido.Text) || string.IsNullOrWhiteSpace(txtEmail.Text) || string.IsNullOrWhiteSpace(txtUsername.Text))
+                { MessageBox.Show("Nombre, apellido, email y usuario son obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (!txtEmail.Text.Contains('@')) { MessageBox.Show("Ingresá un email válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (_u == null && string.IsNullOrWhiteSpace(txtPassword.Text)) { MessageBox.Show("La contraseña es obligatoria para nuevo usuario.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 var suc = (Sucursal?)cmbSuc.SelectedItem;
-                Repository.SaveUsuario(new Usuario { Id = _u?.Id ?? 0, Nombre = txtNombre.Text.Trim(), Apellido = txtApellido.Text.Trim(), Email = txtEmail.Text.Trim(), Username = txtUsername.Text.Trim(), Rol = cmbRol.SelectedItem?.ToString() ?? "ventas", SucursalId = suc?.Id == 0 ? null : suc?.Id, Activo = chkActivo.Checked }, string.IsNullOrWhiteSpace(txtPassword.Text) ? null : txtPassword.Text);
+                try
+                {
+                    Repository.SaveUsuario(new Usuario { Id = _u?.Id ?? 0, Nombre = txtNombre.Text.Trim(), Apellido = txtApellido.Text.Trim(), Email = txtEmail.Text.Trim(), Username = txtUsername.Text.Trim(), Rol = cmbRol.SelectedItem?.ToString() ?? "ventas", SucursalId = suc?.Id == 0 ? null : suc?.Id, Activo = chkActivo.Checked }, string.IsNullOrWhiteSpace(txtPassword.Text) ? null : txtPassword.Text);
+                }
+                catch (Microsoft.Data.Sqlite.SqliteException ex) when (ex.SqliteErrorCode == 19)
+                { MessageBox.Show("Ya existe un usuario con ese nombre de usuario o ese email.", "No se pudo guardar", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 Close();
             };
             Controls.Add(btn);

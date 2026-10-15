@@ -66,8 +66,19 @@ namespace KawaSysWF.Forms.Ventas
                 }
                 else MessageBox.Show("Seleccioná un faltante.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             };
-            btnEmitir.Click += (s, e) => { if (GetSel() is ModeloFaltante f && !f.Emitido) { Repository.EmitirFaltante(f.Id); LoadGrid(); } };
-            btnElim.Click += (s, e) => { if (GetSel() is ModeloFaltante f && !f.Emitido && MessageBox.Show("¿Eliminar?", "Confirmar", MessageBoxButtons.YesNo) == DialogResult.Yes) { Repository.DeleteFaltante(f.Id); ResetForm(); LoadGrid(); } };
+            btnEmitir.Click += (s, e) =>
+            {
+                if (GetSel() is not ModeloFaltante f) { MessageBox.Show("Seleccioná un faltante.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
+                if (f.Emitido) { MessageBox.Show("Ese faltante ya fue emitido.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
+                Repository.EmitirFaltante(f.Id); LoadGrid();
+            };
+            btnElim.Click += (s, e) =>
+            {
+                if (GetSel() is not ModeloFaltante f) { MessageBox.Show("Seleccioná un faltante.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
+                if (f.Emitido) { MessageBox.Show("No se puede eliminar un faltante ya emitido.", "No permitido", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (MessageBox.Show($"¿Eliminar el faltante {f.Marca} {f.Modelo}?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
+                Repository.DeleteFaltante(f.Id); ResetForm(); LoadGrid();
+            };
             toolbar.Controls.Add(btnModif); toolbar.Controls.Add(btnEmitir); toolbar.Controls.Add(btnElim);
 
             grid = AppTheme.MakeGrid();

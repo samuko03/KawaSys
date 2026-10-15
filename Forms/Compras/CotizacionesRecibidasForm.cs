@@ -44,8 +44,10 @@ namespace KawaSysWF.Forms.Compras
             btn.Left = 0; btn.Top = y;
             btn.Click += (s, e) =>
             {
-                if (cmbSolCot.SelectedItem is not SolicitudCotizacion sc || cmbProv.SelectedItem is not Proveedor prov || !decimal.TryParse(txtMonto.Text, out decimal m))
+                if (cmbSolCot.SelectedItem is not SolicitudCotizacion sc || cmbProv.SelectedItem is not Proveedor prov)
                 { MessageBox.Show("Completá los campos obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (!AppTheme.TryParseMonto(txtMonto.Text, out decimal m) || m <= 0)
+                { MessageBox.Show("Ingresá un monto válido mayor a 0 (por ejemplo 1500000 o 1500000,50).", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 Repository.SaveCotizacion(new Cotizacion { SolicitudCotizacionId = sc.Id, ProveedorId = prov.Id, Fecha = DateTime.Today.ToString("yyyy-MM-dd"), MontoTotal = m, Condiciones = txtCond.Text.Trim(), PlazoEntrega = txtPlazo.Text.Trim() });
                 MessageBox.Show("✅  Cotización registrada.", "KawaSys", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 txtMonto.Clear(); txtCond.Clear(); txtPlazo.Clear(); LoadGrid();

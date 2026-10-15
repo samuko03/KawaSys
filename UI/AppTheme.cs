@@ -40,6 +40,20 @@ namespace KawaSysWF.UI
         public static Font FontNormal  = new Font("Segoe UI", 9);
         public static Font FontSmall   = new Font("Segoe UI", 8);
 
+        /// <summary>
+        /// Convierte un monto escrito a mano. Acepta "1500,50" y "1500.50" (el punto NO se toma como separador
+        /// de miles: con la configuración regional de Argentina "1500.50" se leería como 150050).
+        /// </summary>
+        public static bool TryParseMonto(string? texto, out decimal valor)
+        {
+            valor = 0;
+            if (string.IsNullOrWhiteSpace(texto)) return false;
+            texto = texto.Trim();
+            const System.Globalization.NumberStyles estilo = System.Globalization.NumberStyles.AllowDecimalPoint | System.Globalization.NumberStyles.AllowLeadingSign;
+            return decimal.TryParse(texto, estilo, System.Globalization.CultureInfo.CurrentCulture, out valor)
+                || decimal.TryParse(texto, estilo, System.Globalization.CultureInfo.InvariantCulture, out valor);
+        }
+
         public static Button MakeButton(string text, Color? back = null, int w = 130, int h = 36)
         {
             return new Button

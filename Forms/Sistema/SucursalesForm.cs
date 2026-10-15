@@ -34,7 +34,11 @@ namespace KawaSysWF.Forms.Sistema
                 if (grid.SelectedRows.Count > 0 && grid.SelectedRows[0].Tag is Sucursal su)
                 {
                     if (MessageBox.Show($"¿Eliminar la sucursal \"{su.Nombre}\"?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
-                    { Repository.DeleteSucursal(su.Id); LoadGrid(); }
+                    {
+                        bool baja = Repository.DeleteSucursal(su.Id);
+                        if (baja) MessageBox.Show($"La sucursal \"{su.Nombre}\" ya tiene ventas, usuarios u otros movimientos, por eso no se borró: quedó Inactiva y se conserva el historial.\nPodés reactivarla desde Modificar.", "Sucursal dada de baja", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadGrid();
+                    }
                 }
                 else MessageBox.Show("Seleccioná una sucursal.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             };
@@ -88,7 +92,7 @@ namespace KawaSysWF.Forms.Sistema
         private void Build()
         {
             Text = _s == null ? "Nueva Sucursal" : $"Editar: {_s.Nombre}";
-            Size = new Size(440, 340);
+            Size = new Size(440, 390);
             StartPosition = FormStartPosition.CenterParent;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -120,6 +124,9 @@ namespace KawaSysWF.Forms.Sistema
 
             Field("Email", txtEmail);
 
+            var chkActiva = new CheckBox { Text = "Sucursal activa", Checked = _s?.Activa ?? true, Left = 16, Top = y, AutoSize = true, Font = AppTheme.FontNormal };
+            Controls.Add(chkActiva); y += 30;
+
             var btn = AppTheme.MakeButton("✓  Guardar", AppTheme.Accent, 130, 36);
             btn.Left = 16; btn.Top = y;
             btn.Click += (s, e) =>
@@ -136,7 +143,8 @@ namespace KawaSysWF.Forms.Sistema
                     Direccion = txtDireccion.Text.Trim(),
                     Ciudad    = txtCiudad.Text.Trim(),
                     Telefono  = txtTelefono.Text.Trim(),
-                    Email     = txtEmail.Text.Trim()
+                    Email     = txtEmail.Text.Trim(),
+                    Activa    = chkActiva.Checked
                 });
                 Close();
             };

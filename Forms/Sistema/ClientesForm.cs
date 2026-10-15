@@ -37,7 +37,7 @@ namespace KawaSysWF.Forms.Sistema
             btnCC.Click += (s, e) =>
             {
                 if (grid.SelectedRows.Count > 0 && grid.SelectedRows[0].Tag is Cliente c)
-                    new CuentaCorrienteForm(c).ShowDialog();
+                { new CuentaCorrienteForm(c).ShowDialog(); LoadGrid(); }   // refresca el saldo de la lista
                 else
                     MessageBox.Show("Seleccioná un cliente.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
             };
@@ -110,7 +110,7 @@ namespace KawaSysWF.Forms.Sistema
         private void Build()
         {
             Text = _c == null ? "Nuevo Cliente Mayorista" : $"Editar: {_c.NombreCompleto}";
-            Size = new Size(460, 400);
+            Size = new Size(460, 450);
             StartPosition = FormStartPosition.CenterParent;
             FormBorderStyle = FormBorderStyle.FixedDialog;
             MaximizeBox = false;
@@ -123,7 +123,8 @@ namespace KawaSysWF.Forms.Sistema
             var txtTel      = AppTheme.MakeTextBox(180); txtTel.Text      = _c?.Telefono  ?? "";
             var txtEmail    = AppTheme.MakeTextBox(180); txtEmail.Text    = _c?.Email     ?? "";
             var txtDir      = AppTheme.MakeTextBox(390); txtDir.Text      = _c?.Direccion ?? "";
-            var nudLimite   = new NumericUpDown { Width = 180, DecimalPlaces = 2, Maximum = 9999999, Value = (decimal)(_c?.LimiteCredito ?? 0), Font = AppTheme.FontNormal };
+            var nudLimite   = new NumericUpDown { Width = 180, DecimalPlaces = 2, Maximum = 999999999, Font = AppTheme.FontNormal };
+            nudLimite.Value = Math.Min(_c?.LimiteCredito ?? 0, nudLimite.Maximum);
 
             // Nombre / Apellido en fila
             Controls.Add(new Label { Text = "Nombre *", Left = 16, Top = y, AutoSize = true, Font = AppTheme.FontBold });
@@ -150,11 +151,8 @@ namespace KawaSysWF.Forms.Sistema
 
             Field("Dirección", txtDir);
 
-            if (_c == null)
-            {
-                Controls.Add(new Label { Text = "Límite de crédito $", Left = 16, Top = y, AutoSize = true, Font = AppTheme.FontBold });
-                y += 20; nudLimite.Left = 16; nudLimite.Top = y; Controls.Add(nudLimite); y += 34;
-            }
+            Controls.Add(new Label { Text = "Límite de crédito $", Left = 16, Top = y, AutoSize = true, Font = AppTheme.FontBold });
+            y += 20; nudLimite.Left = 16; nudLimite.Top = y; Controls.Add(nudLimite); y += 34;
 
             var btn = AppTheme.MakeButton("✓  Guardar", AppTheme.Accent, 130, 36);
             btn.Left = 16; btn.Top = y;
@@ -165,6 +163,8 @@ namespace KawaSysWF.Forms.Sistema
                     MessageBox.Show("El nombre es obligatorio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
+                try
+                {
                 Repository.SaveCliente(new Cliente
                 {
                     Id           = _c?.Id ?? 0,
@@ -176,6 +176,9 @@ namespace KawaSysWF.Forms.Sistema
                     Direccion    = txtDir.Text.Trim(),
                     LimiteCredito= nudLimite.Value
                 });
+                }
+                catch (Exception ex)
+                { MessageBox.Show("No se pudo guardar el cliente: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); return; }
                 Close();
             };
             Controls.Add(btn);

@@ -84,7 +84,7 @@ namespace KawaSysWF.Forms.Ventas
 
         private void UpdateTotal()
         {
-            if (decimal.TryParse(txtPrecio.Text, out decimal p))
+            if (AppTheme.TryParseMonto(txtPrecio.Text, out decimal p))
                 lblTotal.Text = $"Total: {(p * (decimal)nudCantidad.Value):C2}";
             else
                 lblTotal.Text = "Total: $0,00";
@@ -92,13 +92,15 @@ namespace KawaSysWF.Forms.Ventas
 
         private void DoSave(object? s, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtModelo.Text) || string.IsNullOrWhiteSpace(txtPrecio.Text) || cmbPago.SelectedItem == null)
+            if (string.IsNullOrWhiteSpace(txtMarca.Text) || string.IsNullOrWhiteSpace(txtModelo.Text) || string.IsNullOrWhiteSpace(txtPrecio.Text) || cmbPago.SelectedItem == null)
             { MessageBox.Show("Completá los campos obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-            if (!decimal.TryParse(txtPrecio.Text, out decimal precio) || precio <= 0)
-            { MessageBox.Show("El precio debe ser un número mayor a 0.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            if (!AppTheme.TryParseMonto(txtPrecio.Text, out decimal precio) || precio <= 0)
+            { MessageBox.Show("El precio debe ser un número mayor a 0 (por ejemplo 285000 o 285000,50).", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
             var suc = (Sucursal?)cmbSucursal.SelectedItem;
             var cli = (Cliente?)cmbCliente.SelectedItem;
+            if (cmbPago.SelectedItem?.ToString() == "Cuenta corriente" && (cli == null || cli.Id == 0))
+            { MessageBox.Show("Una venta en Cuenta corriente necesita un cliente. Elegí un cliente o cambiá la forma de pago.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
             Repository.SaveVenta(new Venta
             {
                 Fecha = DateTime.Today.ToString("yyyy-MM-dd"),

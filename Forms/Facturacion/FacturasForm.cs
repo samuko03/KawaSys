@@ -102,6 +102,15 @@ namespace KawaSysWF.Forms.Facturacion
             Controls.Add(acciones);
             Controls.Add(filter);
             LoadData();
+
+            // El filtro se aplica al instante, sin tener que pulsar Buscar.
+            cmbCliente.SelectedIndexChanged += (s, e) => LoadData();
+            cmbSucursal.SelectedIndexChanged += (s, e) => LoadData();
+            chkPendientes.CheckedChanged += (s, e) => LoadData();
+            chkDesde.CheckedChanged += (s, e) => LoadData();
+            chkHasta.CheckedChanged += (s, e) => LoadData();
+            dtDesde.ValueChanged += (s, e) => { if (chkDesde.Checked) LoadData(); };
+            dtHasta.ValueChanged += (s, e) => { if (chkHasta.Checked) LoadData(); };
         }
 
         private Factura? Seleccion => grid.SelectedRows.Count == 0 ? null : grid.SelectedRows[0].Tag as Factura;
