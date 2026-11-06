@@ -226,6 +226,7 @@ namespace KawaSysWF.Forms
                 AddNavItem("🧾", "Facturas", () => ShowForm(new FacturasForm(CurrentUser)));
                 AddNavItem("💵", "Cobros y Pendientes", () => ShowForm(new CobrosForm(CurrentUser)), isFinanzas);
                 AddNavItem("🗓", "Facturación Mensual", () => ShowForm(new FacturacionMensualForm(CurrentUser)), isFinanzas);
+                AddNavItem("📊", "Reportes Estadísticos", () => ShowForm(new ReportesForm(CurrentUser)), isFinanzas);
             }
 
             AddSection("CLIENTES");

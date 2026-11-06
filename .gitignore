@@ -4,3 +4,4 @@ obj/
 .vs/
 *.db
 *.bak
+*.feature.cs

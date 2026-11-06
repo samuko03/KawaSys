@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schemas.reqnroll.net/reqnroll-config-latest.json",
+  "language": {
+    "feature": "es",
+    "binding": "es-AR"
+  },
+  "formatters": {
+    "html": { "outputFilePath": "reportes/kawasys_bdd.html" },
+    "message": { "outputFilePath": "reportes/kawasys_bdd.ndjson" }
+  }
+}

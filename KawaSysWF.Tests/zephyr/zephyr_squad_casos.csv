@@ -1,0 +1,170 @@
+﻿"Summary","Description","Priority","Labels","Requirement","Step","Test Data","Expected Result"
+"Venta al contado genera una factura cobrada","Generación de la factura al registrar una venta. Como vendedor de una sucursal de Kawa Quiero que cada venta registrada genere su factura automáticamente Para no cargar dos veces la operación y que Finanzas vea lo que hay que cobrar
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","High","facturacion smoke","KAWA-43,KAWA-44","Cuando registro una venta a consumidor final de 2 ""Honda"" ""XR150"" a 285000 cada una con forma de pago ""Efectivo""","","Entonces se genera una factura en estado ""cobrada""
+Y la factura tiene un total de 570000
+Y la factura tiene un cobro de 570000 con medio de pago ""Efectivo""
+Y el saldo pendiente de la factura es 0"
+"Cualquier medio de pago que no sea cuenta corriente cobra la factura completa","Generación de la factura al registrar una venta. Como vendedor de una sucursal de Kawa Quiero que cada venta registrada genere su factura automáticamente Para no cargar dos veces la operación y que Finanzas vea lo que hay que cobrar
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","Normal","facturacion","KAWA-43,KAWA-44","Cuando registro una venta a consumidor final de 1 ""Yamaha"" ""FZ25"" a 380000 cada una con forma de pago ""<medio>""","Ejemplos:
+| medio         |
+| Efectivo      |
+| Transferencia |
+| Crédito       |
+| Cheque        |","Entonces se genera una factura en estado ""cobrada""
+Y la factura tiene un cobro de 380000 con medio de pago ""<medio>"""
+"Venta en cuenta corriente queda pendiente de cobro y debita la cuenta del cliente","Generación de la factura al registrar una venta. Como vendedor de una sucursal de Kawa Quiero que cada venta registrada genere su factura automáticamente Para no cargar dos veces la operación y que Finanzas vea lo que hay que cobrar
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","High","facturacion smoke","KAWA-43,KAWA-44,KAWA-48","Dado que la cuenta corriente de ""Moto Center"" tiene saldo -45000","",""
+"","","","","","Cuando registro una venta al cliente ""Moto Center"" de 1 ""Yamaha"" ""FZ25"" a 380000 cada una con forma de pago ""Cuenta corriente""","","Entonces se genera una factura en estado ""emitida""
+Y la factura no tiene cobros registrados
+Y el saldo pendiente de la factura es 380000
+Y el saldo de la cuenta corriente de ""Moto Center"" es -425000"
+"El detalle de la factura copia los datos de la venta","Generación de la factura al registrar una venta. Como vendedor de una sucursal de Kawa Quiero que cada venta registrada genere su factura automáticamente Para no cargar dos veces la operación y que Finanzas vea lo que hay que cobrar
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","Normal","facturacion","KAWA-43,KAWA-44","Cuando registro una venta al cliente ""Motos Patagonia"" de 3 ""Motomel"" ""Skua 150"" a 195000 cada una con forma de pago ""Transferencia""","","Entonces el detalle de la factura tiene 1 línea
+Y la línea de la factura es 3 x ""Motomel Skua 150"" a 195000 con subtotal 585000
+Y la factura está a nombre de ""Motos Patagonia SRL"""
+"Las facturas se numeran en forma correlativa","Generación de la factura al registrar una venta. Como vendedor de una sucursal de Kawa Quiero que cada venta registrada genere su factura automáticamente Para no cargar dos veces la operación y que Finanzas vea lo que hay que cobrar
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","Normal","facturacion","KAWA-43,KAWA-44","Cuando registro una venta a consumidor final de 1 ""Zanella"" ""ZB 110"" a 165000 cada una con forma de pago ""Efectivo""
+Y registro una venta a consumidor final de 1 ""Honda"" ""Wave 110"" a 160000 cada una con forma de pago ""Efectivo""","","Entonces la última factura tiene el número siguiente a la anterior"
+"Facturar las ventas históricas que todavía no tienen factura","Generación de la factura al registrar una venta. Como vendedor de una sucursal de Kawa Quiero que cada venta registrada genere su factura automáticamente Para no cargar dos veces la operación y que Finanzas vea lo que hay que cobrar
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","Normal","facturacion","KAWA-43,KAWA-44,KAWA-46","Dado que la cuenta corriente de ""Moto Center"" tiene saldo -45000","",""
+"","","","","","Cuando facturo las ventas pendientes de facturar","","Entonces se generan 15 facturas
+Y no queda ninguna venta sin factura
+Y el saldo de la cuenta corriente de ""Moto Center"" es -45000"
+"Cobro parcial deja la factura en estado parcial","Registro de cobros sobre facturas pendientes. Como responsable de Finanzas Quiero registrar los cobros parciales o totales de las facturas en cuenta corriente Para saber cuánto debe cada cliente y mantener su cuenta corriente al día
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y una factura en cuenta corriente de ""Distribuidora Del Sur"" por 600000","High","cobranzas smoke","KAWA-47,KAWA-48","Cuando registro un cobro de 200000 con ""Transferencia""","","Entonces la factura queda en estado ""parcial""
+Y el saldo pendiente de la factura es 400000
+Y el saldo de la cuenta corriente de ""Distribuidora Del Sur"" es -387500"
+"Cobro por el total pendiente deja la factura cobrada","Registro de cobros sobre facturas pendientes. Como responsable de Finanzas Quiero registrar los cobros parciales o totales de las facturas en cuenta corriente Para saber cuánto debe cada cliente y mantener su cuenta corriente al día
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y una factura en cuenta corriente de ""Distribuidora Del Sur"" por 600000","High","cobranzas smoke","KAWA-47,KAWA-48","Cuando registro un cobro de 600000 con ""Cheque""","","Entonces la factura queda en estado ""cobrada""
+Y el saldo pendiente de la factura es 0
+Y el saldo de la cuenta corriente de ""Distribuidora Del Sur"" es 12500"
+"Varios cobros parciales completan la factura","Registro de cobros sobre facturas pendientes. Como responsable de Finanzas Quiero registrar los cobros parciales o totales de las facturas en cuenta corriente Para saber cuánto debe cada cliente y mantener su cuenta corriente al día
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y una factura en cuenta corriente de ""Distribuidora Del Sur"" por 600000","Normal","cobranzas","KAWA-47,KAWA-48","Cuando registro un cobro de 250000 con ""Efectivo""
+Y registro un cobro de 350000 con ""Transferencia""","","Entonces la factura queda en estado ""cobrada""
+Y la factura tiene 2 cobros registrados"
+"No se puede cobrar más que el saldo pendiente","Registro de cobros sobre facturas pendientes. Como responsable de Finanzas Quiero registrar los cobros parciales o totales de las facturas en cuenta corriente Para saber cuánto debe cada cliente y mantener su cuenta corriente al día
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y una factura en cuenta corriente de ""Distribuidora Del Sur"" por 600000","Normal","cobranzas negativo","KAWA-47,KAWA-48","Cuando registro un cobro de 650000 con ""Efectivo""","","Entonces el sistema rechaza la operación con el mensaje ""supera el saldo pendiente""
+Y la factura queda en estado ""emitida""
+Y la factura no tiene cobros registrados"
+"El monto del cobro tiene que ser mayor a cero","Registro de cobros sobre facturas pendientes. Como responsable de Finanzas Quiero registrar los cobros parciales o totales de las facturas en cuenta corriente Para saber cuánto debe cada cliente y mantener su cuenta corriente al día
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y una factura en cuenta corriente de ""Distribuidora Del Sur"" por 600000","Normal","cobranzas negativo","KAWA-47,KAWA-48","Cuando registro un cobro de <monto> con ""Efectivo""","Ejemplos:
+| monto  |
+| 0      |
+| -1000  |","Entonces el sistema rechaza la operación con el mensaje ""mayor a cero"""
+"Solo se aceptan los medios de pago habilitados","Registro de cobros sobre facturas pendientes. Como responsable de Finanzas Quiero registrar los cobros parciales o totales de las facturas en cuenta corriente Para saber cuánto debe cada cliente y mantener su cuenta corriente al día
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y una factura en cuenta corriente de ""Distribuidora Del Sur"" por 600000","Normal","cobranzas negativo","KAWA-47,KAWA-48","Cuando registro un cobro de 100000 con ""Bitcoin""","","Entonces el sistema rechaza la operación con el mensaje ""Medio de pago inválido"""
+"No se puede cobrar una factura que no existe","Registro de cobros sobre facturas pendientes. Como responsable de Finanzas Quiero registrar los cobros parciales o totales de las facturas en cuenta corriente Para saber cuánto debe cada cliente y mantener su cuenta corriente al día
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y una factura en cuenta corriente de ""Distribuidora Del Sur"" por 600000","Normal","cobranzas negativo","KAWA-47,KAWA-48","Cuando registro un cobro de 100000 con ""Efectivo"" sobre la factura 9999","","Entonces el sistema rechaza la operación con el mensaje ""La factura no existe"""
+"Intentar modificar una venta facturada","Una venta facturada no se modifica ni se elimina. Como responsable de Finanzas Quiero que una factura emitida cierre la operación de venta Para que lo facturado coincida siempre con lo vendido
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","High","facturacion negativo smoke","KAWA-51","Dado una venta facturada de 1 ""Honda"" ""CB190"" a 320000","",""
+"","","","","","Cuando intento cambiar la cantidad de la venta a 5","","Entonces el sistema rechaza la operación con el mensaje ""ya tiene emitida la factura""
+Y la venta sigue teniendo cantidad 1 y total 320000"
+"Intentar eliminar una venta facturada","Una venta facturada no se modifica ni se elimina. Como responsable de Finanzas Quiero que una factura emitida cierre la operación de venta Para que lo facturado coincida siempre con lo vendido
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","Normal","facturacion negativo","KAWA-51","Dado una venta facturada de 1 ""Honda"" ""CB190"" a 320000","",""
+"","","","","","Cuando intento eliminar la venta","","Entonces el sistema rechaza la operación con el mensaje ""ya tiene emitida la factura""
+Y la venta sigue existiendo"
+"Una venta histórica sin factura todavía se puede modificar","Una venta facturada no se modifica ni se elimina. Como responsable de Finanzas Quiero que una factura emitida cierre la operación de venta Para que lo facturado coincida siempre con lo vendido
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","Normal","facturacion","KAWA-51","Dado la venta histórica número 2, que no tiene factura","",""
+"","","","","","Cuando intento cambiar la cantidad de la venta a 2","","Entonces la operación se realiza sin errores
+Y la venta sigue teniendo cantidad 2 y total 440000"
+"Una venta histórica sin factura todavía se puede eliminar","Una venta facturada no se modifica ni se elimina. Como responsable de Finanzas Quiero que una factura emitida cierre la operación de venta Para que lo facturado coincida siempre con lo vendido
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys","Normal","facturacion","KAWA-51","Dado la venta histórica número 2, que no tiene factura","",""
+"","","","","","Cuando intento eliminar la venta","","Entonces la operación se realiza sin errores
+Y la venta ya no existe"
+"Ver solo las facturas pendientes de cobro","Consulta de facturas y listado mensual. Como responsable de Finanzas Quiero consultar las facturas pendientes y el listado de cada mes Para hacer el seguimiento de la cobranza
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","High","consultas smoke","KAWA-50,KAWA-52,KAWA-53","Cuando consulto las facturas pendientes de cobro","","Entonces obtengo 4 facturas
+Y todas están en estado ""emitida"" o ""parcial"""
+"Filtrar las facturas de un cliente","Consulta de facturas y listado mensual. Como responsable de Finanzas Quiero consultar las facturas pendientes y el listado de cada mes Para hacer el seguimiento de la cobranza
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","Normal","consultas","KAWA-50,KAWA-52,KAWA-53","Cuando consulto las facturas del cliente ""Moto Center""","","Entonces obtengo 3 facturas
+Y todas son del cliente ""Moto Center SRL"""
+"Totales del listado mensual","Consulta de facturas y listado mensual. Como responsable de Finanzas Quiero consultar las facturas pendientes y el listado de cada mes Para hacer el seguimiento de la cobranza
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","Normal","consultas","KAWA-50,KAWA-52,KAWA-53","Cuando genero el listado mensual de <mes> de 2025","Ejemplos:
+| mes | cantidad | facturado | cobrado | pendiente |
+| 5   | 10       | 3845000   | 2880000 | 965000    |
+| 6   | 5        | 3060000   | 1860000 | 1200000   |
+| 7   | 0        | 0         | 0       | 0         |","Entonces obtengo <cantidad> facturas
+Y el total facturado es <facturado>
+Y el total cobrado es <cobrado>
+Y el total pendiente es <pendiente>"
+"El listado mensual se ordena por número de factura","Consulta de facturas y listado mensual. Como responsable de Finanzas Quiero consultar las facturas pendientes y el listado de cada mes Para hacer el seguimiento de la cobranza
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","Normal","consultas","KAWA-50,KAWA-52,KAWA-53","Cuando genero el listado mensual de 5 de 2025","","Entonces las facturas están ordenadas por número de menor a mayor"
+"Facturado contra cobrado por mes","Reportes estadísticos de facturación y cobranzas. Como responsable de Finanzas Quiero ver gráficos con lo facturado, lo cobrado y lo que se debe Para tomar decisiones sobre la cobranza sin armar planillas a mano
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","High","reportes smoke","","Cuando consulto el reporte de facturado contra cobrado de 2025","| mes | facturado | cobrado |
+| 5   | 3845000   | 2880000 |
+| 6   | 3060000   | 1860000 |","Entonces el reporte mensual muestra:
+Y los demás meses figuran en cero"
+"Cobros por medio de pago","Reportes estadísticos de facturación y cobranzas. Como responsable de Finanzas Quiero ver gráficos con lo facturado, lo cobrado y lo que se debe Para tomar decisiones sobre la cobranza sin armar planillas a mano
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","Normal","reportes","","Cuando consulto el reporte de cobros por medio de pago de 2025","| etiqueta      | valor   |
+| Transferencia | 2650000 |
+| Efectivo      | 1115000 |
+| Crédito       | 685000  |
+| Cheque        | 290000  |","Entonces el reporte muestra, de mayor a menor:"
+"Facturas por estado","Reportes estadísticos de facturación y cobranzas. Como responsable de Finanzas Quiero ver gráficos con lo facturado, lo cobrado y lo que se debe Para tomar decisiones sobre la cobranza sin armar planillas a mano
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","Normal","reportes","","Cuando consulto el reporte de facturas por estado de 2025","| etiqueta | cantidad |
+| cobrada  | 11       |
+| emitida  | 4        |","Entonces el reporte muestra estas cantidades:"
+"Clientes con mayor deuda","Reportes estadísticos de facturación y cobranzas. Como responsable de Finanzas Quiero ver gráficos con lo facturado, lo cobrado y lo que se debe Para tomar decisiones sobre la cobranza sin armar planillas a mano
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","Normal","reportes","","Cuando consulto el reporte de deuda por cliente de 2025","| etiqueta                 | valor   |
+| Distribuidora Del Sur SA | 1145000 |
+| Moto Center SRL          | 1020000 |","Entonces el reporte muestra, de mayor a menor:"
+"Un cobro parcial se refleja en los reportes","Reportes estadísticos de facturación y cobranzas. Como responsable de Finanzas Quiero ver gráficos con lo facturado, lo cobrado y lo que se debe Para tomar decisiones sobre la cobranza sin armar planillas a mano
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","Normal","reportes","","Dado la factura de la venta histórica número 15","",""
+"","","","","","Cuando registro un cobro de 145000 con ""Cheque""
+Y consulto el reporte de deuda por cliente de 2025","| etiqueta                 | valor   |
+| Moto Center SRL          | 1020000 |
+| Distribuidora Del Sur SA | 1000000 |","Entonces el reporte muestra, de mayor a menor:
+Y al consultar el reporte de facturas por estado de 2025 hay 1 factura en estado ""parcial"""
+"Facturado por sucursal","Reportes estadísticos de facturación y cobranzas. Como responsable de Finanzas Quiero ver gráficos con lo facturado, lo cobrado y lo que se debe Para tomar decisiones sobre la cobranza sin armar planillas a mano
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","Normal","reportes","","Cuando consulto el reporte de facturado por sucursal de 2025","| etiqueta       | valor   |
+| Sucursal Norte | 3900000 |
+| Sucursal Sur   | 3005000 |","Entonces el reporte muestra, de mayor a menor:"
+"Exportar el reporte como imagen","Reportes estadísticos de facturación y cobranzas. Como responsable de Finanzas Quiero ver gráficos con lo facturado, lo cobrado y lo que se debe Para tomar decisiones sobre la cobranza sin armar planillas a mano
+Precondición:
+Dado que el sistema tiene los datos iniciales de KawaSys
+Y que se facturaron las ventas históricas","High","reportes smoke","","Dado la factura de la venta histórica número 15","",""
+"","","","","","Cuando registro un cobro de 145000 con ""Cheque""
+Y exporto el reporte de 2025 como imagen ""reporte_2025.png""","","Entonces se genera una imagen PNG de 1200 píxeles de ancho"

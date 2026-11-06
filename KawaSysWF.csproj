@@ -10,6 +10,13 @@
     <AssemblyTitle>KawaSys</AssemblyTitle>
   </PropertyGroup>
 
+  <!-- El proyecto de tests vive en una subcarpeta: no se compila dentro de la app -->
+  <ItemGroup>
+    <Compile Remove="KawaSysWF.Tests\**" />
+    <EmbeddedResource Remove="KawaSysWF.Tests\**" />
+    <None Remove="KawaSysWF.Tests\**" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.Data.Sqlite" Version="9.0.0" />

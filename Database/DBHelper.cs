@@ -11,6 +11,9 @@ namespace KawaSysWF.Database
 
         public static string ConnectionString => $"Data Source={_dbPath}";
 
+        /// <summary>Apunta a otro archivo de base (lo usan los tests para trabajar sobre una copia).</summary>
+        public static void UsarBaseDeDatos(string path) => _dbPath = path;
+
         public static SqliteConnection GetConnection()
         {
             var conn = new SqliteConnection(ConnectionString);
