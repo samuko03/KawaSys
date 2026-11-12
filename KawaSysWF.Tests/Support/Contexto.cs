@@ -13,6 +13,7 @@ namespace KawaSysWF.Tests.Support
         public List<ReportesRepository.FilaMes> ReporteMensual { get; set; } = new();
         public List<ReportesRepository.Serie> Reporte { get; set; } = new();
         public string? Imagen { get; set; }
+        public List<Moto> Motos { get; set; } = new();
 
         /// <summary>Error que devolvió el sistema en el último "Cuando".</summary>
         public Exception? Error { get; set; }

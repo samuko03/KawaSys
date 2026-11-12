@@ -77,7 +77,13 @@ namespace KawaSysWF.Forms.Facturacion
             catch (Exception ex) { MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); }
         }
 
-        private void Emitir() =>
-            Comprobantes.AbrirListadoMensual((int)nudAnio.Value, cmbMes.SelectedIndex + 1, _filas);
+        private void Emitir()
+        {
+            if (_filas.Count == 0)
+            { MessageBox.Show("No hay facturas en el mes elegido.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
+            try { Comprobantes.AbrirListadoMensual((int)nudAnio.Value, cmbMes.SelectedIndex + 1, _filas); }
+            catch (Exception ex)
+            { MessageBox.Show("No se pudo emitir el listado: " + ex.Message, "Listado no emitido", MessageBoxButtons.OK, MessageBoxIcon.Warning); }
+        }
     }
 }

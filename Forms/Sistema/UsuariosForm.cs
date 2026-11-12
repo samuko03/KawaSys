@@ -117,6 +117,11 @@ namespace KawaSysWF.Forms.Sistema
                 { MessageBox.Show("Nombre, apellido, email y usuario son obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (!txtEmail.Text.Contains('@')) { MessageBox.Show("Ingresá un email válido.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 if (_u == null && string.IsNullOrWhiteSpace(txtPassword.Text)) { MessageBox.Show("La contraseña es obligatoria para nuevo usuario.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                // Siempre tiene que quedar al menos un administrador activo: si no, nadie puede gestionar usuarios.
+                bool quedaAdmin = cmbRol.SelectedItem?.ToString() == "sistema" && chkActivo.Checked;
+                if (_u is { Rol: "sistema", Activo: true } && !quedaAdmin &&
+                    Repository.GetUsuarios().FindAll(x => x.Rol == "sistema" && x.Activo && x.Id != _u.Id).Count == 0)
+                { MessageBox.Show("Es el único administrador activo (rol sistema): no se le puede cambiar el rol ni desactivarlo.", "No permitido", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 var suc = (Sucursal?)cmbSuc.SelectedItem;
                 try
                 {

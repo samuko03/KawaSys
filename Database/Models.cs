@@ -27,6 +27,21 @@ namespace KawaSysWF.Database
         public override string ToString() => Nombre;
     }
 
+    /// <summary>Modelo de moto del catálogo (clase Moto del diagrama).</summary>
+    public class Moto
+    {
+        public int Id { get; set; }
+        public string Marca { get; set; } = "";
+        public string Modelo { get; set; } = "";
+        public int Cilindrada { get; set; }
+        public string Color { get; set; } = "";
+        public decimal Precio { get; set; }
+        public int Stock { get; set; }
+        public bool Activa { get; set; } = true;
+        public string Descripcion => $"{Marca} {Modelo}";
+        public override string ToString() => $"{Marca} {Modelo} — stock {Stock}";
+    }
+
     public class Venta
     {
         public int Id { get; set; }

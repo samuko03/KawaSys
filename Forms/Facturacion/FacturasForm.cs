@@ -154,7 +154,12 @@ namespace KawaSysWF.Forms.Facturacion
         private void Emitir()
         {
             if (Seleccion is not Factura f) { MessageBox.Show("Seleccioná una factura de la lista.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
-            Comprobantes.AbrirFactura(FacturacionRepository.Obtener(f.Id) ?? f, FacturacionRepository.Detalle(f.Id));
+            try { Comprobantes.AbrirFactura(FacturacionRepository.Obtener(f.Id) ?? f, FacturacionRepository.Detalle(f.Id)); }
+            catch (Exception ex)
+            {
+                MessageBox.Show("No se pudo generar el PDF de la factura: " + ex.Message +
+                    "\nSi el PDF de esta factura está abierto, cerralo y volvé a intentar.", "PDF no generado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
 
         private void GenerarPendientes()

@@ -47,7 +47,7 @@ namespace KawaSysWF.Forms.Ventas
             btn.Left = 0; btn.Top = y;
             btn.Click += (s, e) =>
             {
-                if (string.IsNullOrWhiteSpace(txtCliente.Text) || string.IsNullOrWhiteSpace(txtModelo.Text)) { MessageBox.Show("Completá los campos obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (string.IsNullOrWhiteSpace(txtCliente.Text) || string.IsNullOrWhiteSpace(txtMarca.Text) || string.IsNullOrWhiteSpace(txtModelo.Text)) { MessageBox.Show("Completá los campos obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 var suc = (Sucursal?)cmbSuc.SelectedItem;
                 var p = new PedidoCliente { Id = _editId, SucursalId = suc?.Id ?? 0, ClienteNombre = txtCliente.Text.Trim(), Marca = txtMarca.Text.Trim(), Modelo = txtModelo.Text.Trim(), Cantidad = (int)nudCant.Value, Fecha = DateTime.Today.ToString("yyyy-MM-dd"), Observaciones = txtObs.Text.Trim() };
                 if (_editId == 0) Repository.SavePedidoCliente(p);
@@ -98,7 +98,7 @@ namespace KawaSysWF.Forms.Ventas
             txtCliente.Text = p.ClienteNombre;
             txtMarca.Text = p.Marca;
             txtModelo.Text = p.Modelo;
-            nudCant.Value = Math.Max(1, p.Cantidad);
+            nudCant.Value = Math.Clamp(p.Cantidad, nudCant.Minimum, nudCant.Maximum);
             txtObs.Text = p.Observaciones;
             btn.Text = "✓  Guardar cambios";
         }

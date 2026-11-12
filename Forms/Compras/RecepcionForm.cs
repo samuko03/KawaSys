@@ -42,6 +42,8 @@ namespace KawaSysWF.Forms.Compras
             btn.Click += (s, e) =>
             {
                 if (cmbOrden.SelectedItem is not OrdenCompra o) { MessageBox.Show("Seleccioná una orden aprobada.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                if (dtLlegada.Value.Date < dtDespacho.Value.Date)
+                { MessageBox.Show("La fecha estimada de llegada no puede ser anterior a la fecha de despacho.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
                 using var conn = DBHelper.GetConnection();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = "INSERT INTO pedidos_recepcion(orden_id,fecha_despacho,fecha_estimada_llegada,descripcion) VALUES(@oid,@fd,@fl,@d)";

@@ -9,8 +9,9 @@ namespace KawaSysWF.Forms.Ventas
     public class RegistrarVentaForm : Form
     {
         private readonly Usuario _user;
-        private ComboBox cmbSucursal = null!, cmbCliente = null!, cmbPago = null!;
-        private TextBox txtMarca = null!, txtModelo = null!, txtPrecio = null!, txtObs = null!;
+        private ComboBox cmbSucursal = null!, cmbCliente = null!, cmbPago = null!, cmbMoto = null!;
+        private TextBox txtPrecio = null!, txtObs = null!;
+        private Label lblStock = null!;
         private NumericUpDown nudCantidad = null!;
         private Label lblTotal = null!;
 
@@ -41,17 +42,14 @@ namespace KawaSysWF.Forms.Ventas
             cmbCliente.SelectedIndex = 0;
             card.Controls.Add(cmbCliente); y += 36;
 
-            void Row2(string l1, string l2, Control c1, Control c2)
-            {
-                card.Controls.Add(new Label { Text = l1, Left = 16, Top = y, AutoSize = true, Font = AppTheme.FontBold });
-                card.Controls.Add(new Label { Text = l2, Left = 186, Top = y, AutoSize = true, Font = AppTheme.FontBold });
-                c1.Left = 16; c1.Top = y + 20; c1.Width = 160;
-                c2.Left = 186; c2.Top = y + 20; c2.Width = 170;
-                card.Controls.Add(c1); card.Controls.Add(c2);
-            }
-
-            txtMarca = AppTheme.MakeTextBox(); txtModelo = AppTheme.MakeTextBox();
-            Row2("Marca *", "Modelo *", txtMarca, txtModelo); y += 58;
+            // El modelo se elige del catálogo de Gestión de Motos (solo modelos activos) y trae su precio de lista.
+            card.Controls.Add(new Label { Text = "Moto (marca y modelo) *", Left = 16, Top = y, AutoSize = true, Font = AppTheme.FontBold });
+            y += 20; cmbMoto = AppTheme.MakeCombo(340); cmbMoto.Left = 16; cmbMoto.Top = y;
+            cmbMoto.SelectedIndexChanged += (s, e) => MotoElegida();
+            card.Controls.Add(cmbMoto);
+            lblStock = new Label { Left = 364, Top = y + 4, AutoSize = true, Font = AppTheme.FontSmall, ForeColor = AppTheme.TextMuted };
+            card.Controls.Add(lblStock); y += 36;
+            CargarMotos();
 
             nudCantidad = new NumericUpDown { Left = 16, Top = y + 20, Width = 100, Minimum = 1, Maximum = 999, Value = 1, Font = AppTheme.FontNormal };
             txtPrecio = AppTheme.MakeTextBox(170); txtPrecio.TextChanged += (s, e) => UpdateTotal();
@@ -82,6 +80,21 @@ namespace KawaSysWF.Forms.Ventas
             Controls.Add(scroll);
         }
 
+        private void CargarMotos()
+        {
+            cmbMoto.Items.Clear();
+            foreach (var m in MotosRepository.Buscar(soloActivas: true)) cmbMoto.Items.Add(m);
+            if (cmbMoto.Items.Count == 0) lblStock.Text = "No hay modelos activos: cargalos en Gestión de Motos.";
+        }
+
+        private void MotoElegida()
+        {
+            if (cmbMoto.SelectedItem is not Moto m) { lblStock.Text = ""; return; }
+            txtPrecio.Text = m.Precio.ToString("0.##");
+            lblStock.Text = m.Stock > 0 ? $"Disponibles: {m.Stock}" : "Sin stock";
+            lblStock.ForeColor = m.Stock > 0 ? AppTheme.TextMuted : Color.FromArgb(220, 38, 38);
+        }
+
         private void UpdateTotal()
         {
             if (AppTheme.TryParseMonto(txtPrecio.Text, out decimal p))
@@ -92,8 +105,10 @@ namespace KawaSysWF.Forms.Ventas
 
         private void DoSave(object? s, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtMarca.Text) || string.IsNullOrWhiteSpace(txtModelo.Text) || string.IsNullOrWhiteSpace(txtPrecio.Text) || cmbPago.SelectedItem == null)
+            if (cmbMoto.SelectedItem is not Moto moto || string.IsNullOrWhiteSpace(txtPrecio.Text) || cmbPago.SelectedItem == null)
             { MessageBox.Show("Completá los campos obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            if (nudCantidad.Value > moto.Stock)
+            { MessageBox.Show($"Stock insuficiente de {moto.Descripcion}: hay {moto.Stock} y se quieren vender {nudCantidad.Value}.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
             if (!AppTheme.TryParseMonto(txtPrecio.Text, out decimal precio) || precio <= 0)
             { MessageBox.Show("El precio debe ser un número mayor a 0 (por ejemplo 285000 o 285000,50).", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
 
@@ -101,23 +116,35 @@ namespace KawaSysWF.Forms.Ventas
             var cli = (Cliente?)cmbCliente.SelectedItem;
             if (cmbPago.SelectedItem?.ToString() == "Cuenta corriente" && (cli == null || cli.Id == 0))
             { MessageBox.Show("Una venta en Cuenta corriente necesita un cliente. Elegí un cliente o cambiá la forma de pago.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-            int facturaId = Repository.SaveVenta(new Venta
+            int facturaId;
+            try
+            {
+            facturaId = Repository.SaveVenta(new Venta
             {
                 Fecha = DateTime.Today.ToString("yyyy-MM-dd"),
                 SucursalId = suc?.Id ?? 0,
                 ClienteId = cli?.Id == 0 ? null : cli?.Id,
-                Marca = txtMarca.Text.Trim(),
-                Modelo = txtModelo.Text.Trim(),
+                Marca = moto.Marca,
+                Modelo = moto.Modelo,
                 Cantidad = (int)nudCantidad.Value,
                 PrecioUnitario = precio,
                 Total = precio * (decimal)nudCantidad.Value,
                 FormaPago = cmbPago.SelectedItem?.ToString() ?? "",
                 Observaciones = txtObs.Text.Trim()
             });
+            }
+            catch (InvalidOperationException ex)
+            {
+                // Lo rechaza el catálogo (sin stock o modelo dado de baja mientras la pantalla estaba abierta).
+                MessageBox.Show(ex.Message, "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                CargarMotos();
+                return;
+            }
             var factura = FacturacionRepository.Obtener(facturaId);
             MessageBox.Show($"✅  Venta registrada exitosamente.\nSe generó la factura N° {factura?.NroTexto}. Se abrirá el PDF para descargarla o imprimirla.",
                 "KawaSys", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            txtMarca.Clear(); txtModelo.Clear(); txtPrecio.Clear(); txtObs.Clear(); nudCantidad.Value = 1;
+            txtPrecio.Clear(); txtObs.Clear(); nudCantidad.Value = 1;
+            CargarMotos();   // refresca el stock disponible
 
             // La venta ya quedó guardada; si el PDF falla, se avisa y se puede volver a emitir desde Facturas.
             try { UI.Comprobantes.AbrirFacturaPorId(facturaId); }

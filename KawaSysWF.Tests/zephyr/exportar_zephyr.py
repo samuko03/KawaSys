@@ -14,6 +14,11 @@ AQUI = Path(__file__).parent
 FEATURES = AQUI.parent / "Features"
 CARPETA_RAIZ = "/Facturación y Cobranzas"
 
+
+def carpeta_raiz(tags_feature):
+    """Carpeta de Zephyr según el módulo del .feature."""
+    return "/Gestión de Motos" if "motos" in tags_feature else CARPETA_RAIZ
+
 PALABRAS_PASO = ("Dado ", "Dada ", "Dados ", "Dadas ", "Cuando ", "Entonces ", "Y ", "Pero ")
 
 
@@ -86,7 +91,7 @@ def main():
                 "Name": esc["nombre"],
                 "Objective": objetivo,
                 "Precondition": precondicion,
-                "Folder": f"{CARPETA_RAIZ}/{feature}",
+                "Folder": f"{carpeta_raiz(tags_feature)}/{feature}",
                 "Status": "Approved",
                 "Priority": prioridad,
                 "Labels": ",".join(etiquetas),

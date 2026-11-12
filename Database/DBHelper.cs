@@ -217,6 +217,7 @@ CREATE TABLE IF NOT EXISTS operaciones (
 ";
             cmd.ExecuteNonQuery();
             FacturacionRepository.EnsureSchema(conn);
+            MotosRepository.EnsureSchema(conn);
             SeedData(conn);
         }
 

@@ -207,6 +207,12 @@ namespace KawaSysWF.Forms
 
             if (isCompras)
             {
+                AddSection("MOTOS");
+                AddNavItem("🏍", "Gestión de Motos", () => ShowForm(new Motos.MotosForm(CurrentUser)));
+            }
+
+            if (isCompras)
+            {
                 AddSection("PROVEEDORES");
                 AddNavItem("🏭", "Lista de Proveedores", () => ShowForm(new ProveedoresForm(CurrentUser)));
                 AddNavItem("🔍", "Buscar Proveedor", () => ShowForm(new BuscarProveedorForm(CurrentUser)));

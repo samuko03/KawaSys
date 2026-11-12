@@ -161,6 +161,8 @@ namespace KawaSysWF.Database
             cmd.Parameters.AddWithValue("@fp", v.FormaPago);
             cmd.Parameters.AddWithValue("@ob", v.Observaciones);
             int ventaId = (int)(long)cmd.ExecuteScalar()!;
+            // Gestión de motos: la venta descuenta el stock del modelo (y se rechaza si no alcanza).
+            MotosRepository.DescontarStockEnTx(conn, tx, v.Marca, v.Modelo, v.Cantidad);
             // KAWA-43: cada venta registrada genera su factura (y su cobro si es al contado).
             int facturaId = FacturacionRepository.GenerarEnTx(conn, tx, ventaId, debitarCC: true);
             tx.Commit();
@@ -232,7 +234,7 @@ namespace KawaSysWF.Database
                 cmd.CommandText = "INSERT INTO modelos_faltantes(sucursal_id,marca,modelo,cantidad_solicitada,fecha_generacion,periodo,observaciones) VALUES(@s,@ma,@mo,@c,@f,@p,@ob)";
             else
             {
-                cmd.CommandText = "UPDATE modelos_faltantes SET marca=@ma,modelo=@mo,cantidad_solicitada=@c,periodo=@p,observaciones=@ob WHERE id=@id";
+                cmd.CommandText = "UPDATE modelos_faltantes SET sucursal_id=@s,marca=@ma,modelo=@mo,cantidad_solicitada=@c,periodo=@p,observaciones=@ob WHERE id=@id";
                 cmd.Parameters.AddWithValue("@id", f.Id);
             }
             cmd.Parameters.AddWithValue("@s", f.SucursalId);

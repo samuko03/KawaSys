@@ -119,7 +119,7 @@ namespace KawaSysWF.Forms.Ventas
             foreach (Sucursal it in cmbSucursal.Items) if (it.Id == f.SucursalId) { cmbSucursal.SelectedItem = it; break; }
             txtMarca.Text = f.Marca;
             txtModelo.Text = f.Modelo;
-            nudCant.Value = Math.Max(1, f.CantidadSolicitada);
+            nudCant.Value = Math.Clamp(f.CantidadSolicitada, nudCant.Minimum, nudCant.Maximum);
             txtPeriodo.Text = f.Periodo;
             txtObs.Text = f.Observaciones;
             btnAdd.Text = "✓  Guardar cambios";
@@ -136,6 +136,10 @@ namespace KawaSysWF.Forms.Ventas
         {
             if (string.IsNullOrWhiteSpace(txtModelo.Text) || string.IsNullOrWhiteSpace(txtMarca.Text))
             { MessageBox.Show("Marca y modelo son obligatorios.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            if (string.IsNullOrWhiteSpace(txtPeriodo.Text))
+            { MessageBox.Show("El período es obligatorio.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+            if (cmbSucursal.SelectedItem == null)
+            { MessageBox.Show("Elegí una sucursal.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
             var suc = (Sucursal?)cmbSucursal.SelectedItem;
             Repository.SaveFaltante(new ModeloFaltante
             {

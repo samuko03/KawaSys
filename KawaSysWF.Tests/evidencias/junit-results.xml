@@ -1,11 +1,444 @@
 <testsuites>
-  <testsuite name="KawaSysWF.Tests.dll" tests="34" skipped="0" failures="0" errors="0" time="12.4569915" timestamp="2026-11-06T20:16:44" hostname="DESKTOP-L6U8B17" id="0" package="KawaSysWF.Tests.dll">
+  <testsuite name="KawaSysWF.Tests.dll" tests="54" skipped="0" failures="0" errors="0" time="0.9819718000000001" timestamp="2026-11-11T21:16:39" hostname="DESKTOP-L6U8B17" id="0" package="KawaSysWF.Tests.dll">
     <properties />
-    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="TotalesDelListadoMensual(mes: &quot;5&quot;, cantidad: &quot;10&quot;, facturado: &quot;3845000&quot;, cobrado: &quot;2880000&quot;, pendiente: &quot;965000&quot;, __pickleIndex: &quot;2&quot;, exampleTags: [])" time="0.2426902">
+    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="CualquierMedioDePagoQueNoSeaCuentaCorrienteCobraLaFacturaCompleta(medio: &quot;Cheque&quot;, __pickleIndex: &quot;4&quot;, exampleTags: [])" time="0.0734434">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Cuando registro una venta a consumidor final de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Cheque"
+-&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Yamaha", "FZ25", 380000, "Cheque") (0,0s)
+Entonces se genera una factura en estado "cobrada"
+-&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
+Y la factura tiene un cobro de 380000 con medio de pago "Cheque"
+-&gt; done: PasosFacturacion.CobroUnico(380000, "Cheque") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
+        <property name="Description" value="Cualquier medio de pago que no sea cuenta corriente cobra la factura completa" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-43" />
+        <property name="Category" value="KAWA-44" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="CualquierMedioDePagoQueNoSeaCuentaCorrienteCobraLaFacturaCompleta(medio: &quot;Crédito&quot;, __pickleIndex: &quot;3&quot;, exampleTags: [])" time="0.0134937">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Cuando registro una venta a consumidor final de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Crédito"
+-&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Yamaha", "FZ25", 380000, "Crédito") (0,0s)
+Entonces se genera una factura en estado "cobrada"
+-&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
+Y la factura tiene un cobro de 380000 con medio de pago "Crédito"
+-&gt; done: PasosFacturacion.CobroUnico(380000, "Crédito") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
+        <property name="Description" value="Cualquier medio de pago que no sea cuenta corriente cobra la factura completa" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-43" />
+        <property name="Category" value="KAWA-44" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="CualquierMedioDePagoQueNoSeaCuentaCorrienteCobraLaFacturaCompleta(medio: &quot;Efectivo&quot;, __pickleIndex: &quot;1&quot;, exampleTags: [])" time="0.0216066">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Cuando registro una venta a consumidor final de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Efectivo"
+-&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Yamaha", "FZ25", 380000, "Efectivo") (0,0s)
+Entonces se genera una factura en estado "cobrada"
+-&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
+Y la factura tiene un cobro de 380000 con medio de pago "Efectivo"
+-&gt; done: PasosFacturacion.CobroUnico(380000, "Efectivo") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
+        <property name="Description" value="Cualquier medio de pago que no sea cuenta corriente cobra la factura completa" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-43" />
+        <property name="Category" value="KAWA-44" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="CualquierMedioDePagoQueNoSeaCuentaCorrienteCobraLaFacturaCompleta(medio: &quot;Transferencia&quot;, __pickleIndex: &quot;2&quot;, exampleTags: [])" time="0.0104363">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Cuando registro una venta a consumidor final de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Transferencia"
+-&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Yamaha", "FZ25", 380000, "Transferencia") (0,0s)
+Entonces se genera una factura en estado "cobrada"
+-&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
+Y la factura tiene un cobro de 380000 con medio de pago "Transferencia"
+-&gt; done: PasosFacturacion.CobroUnico(380000, "Transferencia") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
+        <property name="Description" value="Cualquier medio de pago que no sea cuenta corriente cobra la factura completa" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-43" />
+        <property name="Category" value="KAWA-44" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="FacturarLasVentasHistoricasQueTodaviaNoTienenFactura" time="0.0156817">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Dado que la cuenta corriente de "Moto Center" tiene saldo -45000
+-&gt; done: PasosComunes.SaldoCuentaCorriente("Moto Center", -45000) (0,0s)
+Cuando facturo las ventas pendientes de facturar
+-&gt; done: PasosFacturacion.FacturarPendientes() (0,0s)
+Entonces se generan 15 facturas
+-&gt; done: PasosFacturacion.FacturasGeneradas(15) (0,0s)
+Y no queda ninguna venta sin factura
+-&gt; done: PasosFacturacion.TodasFacturadas() (0,0s)
+Y el saldo de la cuenta corriente de "Moto Center" es -45000
+-&gt; done: PasosComunes.SaldoCuentaCorriente("Moto Center", -45000) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
+        <property name="Description" value="Facturar las ventas históricas que todavía no tienen factura" />
+        <property name="Category" value="KAWA-46" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-43" />
+        <property name="Category" value="KAWA-44" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="VentaEnCuentaCorrienteQuedaPendienteDeCobroYDebitaLaCuentaDelCliente" time="0.0217447">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Dado que la cuenta corriente de "Moto Center" tiene saldo -45000
+-&gt; done: PasosComunes.SaldoCuentaCorriente("Moto Center", -45000) (0,0s)
+Cuando registro una venta al cliente "Moto Center" de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Cuenta corriente"
+-&gt; done: PasosFacturacion.VentaCliente("Moto Center", 1, "Yamaha", "FZ25", 380000, "Cuenta corriente") (0,0s)
+Entonces se genera una factura en estado "emitida"
+-&gt; done: PasosFacturacion.EstadoFactura("emitida") (0,0s)
+Y la factura no tiene cobros registrados
+-&gt; done: PasosFacturacion.SinCobros() (0,0s)
+Y el saldo pendiente de la factura es 380000
+-&gt; done: PasosFacturacion.PendienteFactura(380000) (0,0s)
+Y el saldo de la cuenta corriente de "Moto Center" es -425000
+-&gt; done: PasosComunes.SaldoCuentaCorriente("Moto Center", -425000) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
+        <property name="Description" value="Venta en cuenta corriente queda pendiente de cobro y debita la cuenta del cliente" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="KAWA-48" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-43" />
+        <property name="Category" value="KAWA-44" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="ElDetalleDeLaFacturaCopiaLosDatosDeLaVenta" time="0.0145182">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Cuando registro una venta al cliente "Motos Patagonia" de 3 "Motomel" "Skua 150" a 195000 cada una con forma de pago "Transferencia"
+-&gt; done: PasosFacturacion.VentaCliente("Motos Patagonia", 3, "Motomel", "Skua 150", 195000, "Transferencia") (0,0s)
+Entonces el detalle de la factura tiene 1 línea
+-&gt; done: PasosFacturacion.LineasDetalle(1) (0,0s)
+Y la línea de la factura es 3 x "Motomel Skua 150" a 195000 con subtotal 585000
+-&gt; done: PasosFacturacion.LineaDetalle(3, "Motomel Skua 150", 195000, 585000) (0,0s)
+Y la factura está a nombre de "Motos Patagonia SRL"
+-&gt; done: PasosFacturacion.NombreFactura("Motos Patagonia SRL") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
+        <property name="Description" value="El detalle de la factura copia los datos de la venta" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-43" />
+        <property name="Category" value="KAWA-44" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="LasFacturasSeNumeranEnFormaCorrelativa" time="0.0307444">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Cuando registro una venta a consumidor final de 1 "Zanella" "ZB 110" a 165000 cada una con forma de pago "Efectivo"
+-&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Zanella", "ZB 110", 165000, "Efectivo") (0,0s)
+Y registro una venta a consumidor final de 1 "Honda" "Wave 110" a 160000 cada una con forma de pago "Efectivo"
+-&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Honda", "Wave 110", 160000, "Efectivo") (0,0s)
+Entonces la última factura tiene el número siguiente a la anterior
+-&gt; done: PasosFacturacion.Correlativas() (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
+        <property name="Description" value="Las facturas se numeran en forma correlativa" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-43" />
+        <property name="Category" value="KAWA-44" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="VentaAlContadoGeneraUnaFacturaCobrada" time="0.0125084">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Cuando registro una venta a consumidor final de 2 "Honda" "XR150" a 285000 cada una con forma de pago "Efectivo"
+-&gt; done: PasosFacturacion.VentaConsumidorFinal(2, "Honda", "XR150", 285000, "Efectivo") (0,0s)
+Entonces se genera una factura en estado "cobrada"
+-&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
+Y la factura tiene un total de 570000
+-&gt; done: PasosFacturacion.TotalFactura(570000) (0,0s)
+Y la factura tiene un cobro de 570000 con medio de pago "Efectivo"
+-&gt; done: PasosFacturacion.CobroUnico(570000, "Efectivo") (0,0s)
+Y el saldo pendiente de la factura es 0
+-&gt; done: PasosFacturacion.PendienteFactura(0) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
+        <property name="Description" value="Venta al contado genera una factura cobrada" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-43" />
+        <property name="Category" value="KAWA-44" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.UnaVentaFacturadaNoSeModificaNiSeEliminaFeature" name="IntentarModificarUnaVentaFacturada" time="0.0307304">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Dado una venta facturada de 1 "Honda" "CB190" a 320000
+-&gt; done: PasosFacturacion.VentaFacturada(1, "Honda", "CB190", 320000) (0,0s)
+Cuando intento cambiar la cantidad de la venta a 5
+-&gt; done: PasosFacturacion.CambiarCantidad(5) (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "ya tiene emitida la factura"
+-&gt; done: PasosComunes.Rechaza("ya tiene emitida ...") (0,0s)
+Y la venta sigue teniendo cantidad 1 y total 320000
+-&gt; done: PasosFacturacion.VentaSinCambios(1, 320000) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Una venta facturada no se modifica ni se elimina" />
+        <property name="Description" value="Intentar modificar una venta facturada" />
+        <property name="Category" value="negativo" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-51" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.UnaVentaFacturadaNoSeModificaNiSeEliminaFeature" name="IntentarEliminarUnaVentaFacturada" time="0.0288137">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Dado una venta facturada de 1 "Honda" "CB190" a 320000
+-&gt; done: PasosFacturacion.VentaFacturada(1, "Honda", "CB190", 320000) (0,0s)
+Cuando intento eliminar la venta
+-&gt; done: PasosFacturacion.EliminarVenta() (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "ya tiene emitida la factura"
+-&gt; done: PasosComunes.Rechaza("ya tiene emitida ...") (0,0s)
+Y la venta sigue existiendo
+-&gt; done: PasosFacturacion.VentaExiste() (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Una venta facturada no se modifica ni se elimina" />
+        <property name="Description" value="Intentar eliminar una venta facturada" />
+        <property name="Category" value="negativo" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-51" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.UnaVentaFacturadaNoSeModificaNiSeEliminaFeature" name="UnaVentaHistoricaSinFacturaTodaviaSePuedeModificar" time="0.0127210">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Dado la venta histórica número 2, que no tiene factura
+-&gt; done: PasosFacturacion.VentaSinFactura(2) (0,0s)
+Cuando intento cambiar la cantidad de la venta a 2
+-&gt; done: PasosFacturacion.CambiarCantidad(2) (0,0s)
+Entonces la operación se realiza sin errores
+-&gt; done: PasosComunes.SinErrores() (0,0s)
+Y la venta sigue teniendo cantidad 2 y total 440000
+-&gt; done: PasosFacturacion.VentaSinCambios(2, 440000) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Una venta facturada no se modifica ni se elimina" />
+        <property name="Description" value="Una venta histórica sin factura todavía se puede modificar" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-51" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.UnaVentaFacturadaNoSeModificaNiSeEliminaFeature" name="UnaVentaHistoricaSinFacturaTodaviaSePuedeEliminar" time="0.0115090">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Dado la venta histórica número 2, que no tiene factura
+-&gt; done: PasosFacturacion.VentaSinFactura(2) (0,0s)
+Cuando intento eliminar la venta
+-&gt; done: PasosFacturacion.EliminarVenta() (0,0s)
+Entonces la operación se realiza sin errores
+-&gt; done: PasosComunes.SinErrores() (0,0s)
+Y la venta ya no existe
+-&gt; done: PasosFacturacion.VentaNoExiste() (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Una venta facturada no se modifica ni se elimina" />
+        <property name="Description" value="Una venta histórica sin factura todavía se puede eliminar" />
+        <property name="Category" value="facturacion" />
+        <property name="Category" value="KAWA-51" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="FacturasPorEstado" time="0.0240333">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,2s)
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
+Cuando consulto el reporte de facturas por estado de 2025
+-&gt; done: PasosConsultasYReportes.Reporte("facturas por estado", 2025) (0,0s)
+Entonces el reporte muestra estas cantidades:
+  --- table step argument ---
+  | etiqueta | cantidad |
+  | cobrada  | 11       |
+  | emitida  | 4        |
+-&gt; done: PasosConsultasYReportes.ReporteMuestraCantidades(&lt;table&gt;) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
+        <property name="Description" value="Facturas por estado" />
+        <property name="Category" value="reportes" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="FacturadoContraCobradoPorMes" time="0.0222661">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Y que se facturaron las ventas históricas
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
+Cuando consulto el reporte de facturado contra cobrado de 2025
+-&gt; done: PasosConsultasYReportes.ReporteMensual(2025) (0,0s)
+Entonces el reporte mensual muestra:
+  --- table step argument ---
+  | mes | facturado | cobrado |
+  | 5   | 3845000   | 2880000 |
+  | 6   | 3060000   | 1860000 |
+-&gt; done: PasosConsultasYReportes.ReporteMensualMuestra(&lt;table&gt;) (0,0s)
+Y los demás meses figuran en cero
+-&gt; done: PasosConsultasYReportes.DemasMesesEnCero() (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
+        <property name="Description" value="Facturado contra cobrado por mes" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="reportes" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="UnCobroParcialSeReflejaEnLosReportes" time="0.0293029">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Y que se facturaron las ventas históricas
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
+Dado la factura de la venta histórica número 15
+-&gt; done: PasosFacturacion.FacturaDeVentaHistorica(15) (0,0s)
+Cuando registro un cobro de 145000 con "Cheque"
+-&gt; done: PasosFacturacion.RegistrarCobro(145000, "Cheque") (0,0s)
+Y consulto el reporte de deuda por cliente de 2025
+-&gt; done: PasosConsultasYReportes.Reporte("deuda por cliente", 2025) (0,0s)
+Entonces el reporte muestra, de mayor a menor:
+  --- table step argument ---
+  | etiqueta                 | valor   |
+  | Moto Center SRL          | 1020000 |
+  | Distribuidora Del Sur SA | 1000000 |
+-&gt; done: PasosConsultasYReportes.ReporteMuestraValores(&lt;table&gt;) (0,0s)
+Y al consultar el reporte de facturas por estado de 2025 hay 1 factura en estado "parcial"
+-&gt; done: PasosConsultasYReportes.CantidadEnEstado(2025, 1, "parcial") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
+        <property name="Description" value="Un cobro parcial se refleja en los reportes" />
+        <property name="Category" value="reportes" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="FacturadoPorSucursal" time="0.0224666">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Y que se facturaron las ventas históricas
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
+Cuando consulto el reporte de facturado por sucursal de 2025
+-&gt; done: PasosConsultasYReportes.Reporte("facturado por suc...", 2025) (0,0s)
+Entonces el reporte muestra, de mayor a menor:
+  --- table step argument ---
+  | etiqueta       | valor   |
+  | Sucursal Norte | 3900000 |
+  | Sucursal Sur   | 3005000 |
+-&gt; done: PasosConsultasYReportes.ReporteMuestraValores(&lt;table&gt;) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
+        <property name="Description" value="Facturado por sucursal" />
+        <property name="Category" value="reportes" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="ExportarElReporteComoImagen" time="0.1006080">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Y que se facturaron las ventas históricas
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
+Dado la factura de la venta histórica número 15
+-&gt; done: PasosFacturacion.FacturaDeVentaHistorica(15) (0,0s)
+Cuando registro un cobro de 145000 con "Cheque"
+-&gt; done: PasosFacturacion.RegistrarCobro(145000, "Cheque") (0,0s)
+Y exporto el reporte de 2025 como imagen "reporte_2025.png"
+-&gt; done: PasosConsultasYReportes.ExportarImagen(2025, "reporte_2025.png") (0,1s)
+Entonces se genera una imagen PNG de 1200 píxeles de ancho
+-&gt; done: PasosConsultasYReportes.ImagenGenerada(1200) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
+        <property name="Description" value="Exportar el reporte como imagen" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="reportes" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="ClientesConMayorDeuda" time="0.0135572">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Y que se facturaron las ventas históricas
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
+Cuando consulto el reporte de deuda por cliente de 2025
+-&gt; done: PasosConsultasYReportes.Reporte("deuda por cliente", 2025) (0,0s)
+Entonces el reporte muestra, de mayor a menor:
+  --- table step argument ---
+  | etiqueta                 | valor   |
+  | Distribuidora Del Sur SA | 1145000 |
+  | Moto Center SRL          | 1020000 |
+-&gt; done: PasosConsultasYReportes.ReporteMuestraValores(&lt;table&gt;) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
+        <property name="Description" value="Clientes con mayor deuda" />
+        <property name="Category" value="reportes" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="CobrosPorMedioDePago" time="0.0131308">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Y que se facturaron las ventas históricas
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
+Cuando consulto el reporte de cobros por medio de pago de 2025
+-&gt; done: PasosConsultasYReportes.Reporte("cobros por medio ...", 2025) (0,0s)
+Entonces el reporte muestra, de mayor a menor:
+  --- table step argument ---
+  | etiqueta      | valor   |
+  | Transferencia | 2650000 |
+  | Efectivo      | 1115000 |
+  | Crédito       | 685000  |
+  | Cheque        | 290000  |
+-&gt; done: PasosConsultasYReportes.ReporteMuestraValores(&lt;table&gt;) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
+        <property name="Description" value="Cobros por medio de pago" />
+        <property name="Category" value="reportes" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="TotalesDelListadoMensual(mes: &quot;5&quot;, cantidad: &quot;10&quot;, facturado: &quot;3845000&quot;, cobrado: &quot;2880000&quot;, pendiente: &quot;965000&quot;, __pickleIndex: &quot;2&quot;, exampleTags: [])" time="0.0153374">
+      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
+-&gt; done: PasosComunes.DatosIniciales() (0,0s)
+Y que se facturaron las ventas históricas
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
 Cuando genero el listado mensual de 5 de 2025
 -&gt; done: PasosConsultasYReportes.ListadoMensual(5, 2025) (0,0s)
 Entonces obtengo 10 facturas
@@ -27,11 +460,11 @@ Y el total pendiente es 965000
         <property name="Category" value="KAWA-53" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="TotalesDelListadoMensual(mes: &quot;6&quot;, cantidad: &quot;5&quot;, facturado: &quot;3060000&quot;, cobrado: &quot;1860000&quot;, pendiente: &quot;1200000&quot;, __pickleIndex: &quot;3&quot;, exampleTags: [])" time="0.2461341">
+    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="TotalesDelListadoMensual(mes: &quot;6&quot;, cantidad: &quot;5&quot;, facturado: &quot;3060000&quot;, cobrado: &quot;1860000&quot;, pendiente: &quot;1200000&quot;, __pickleIndex: &quot;3&quot;, exampleTags: [])" time="0.0228056">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,2s)
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
 Cuando genero el listado mensual de 6 de 2025
 -&gt; done: PasosConsultasYReportes.ListadoMensual(6, 2025) (0,0s)
 Entonces obtengo 5 facturas
@@ -53,7 +486,7 @@ Y el total pendiente es 1200000
         <property name="Category" value="KAWA-53" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="TotalesDelListadoMensual(mes: &quot;7&quot;, cantidad: &quot;0&quot;, facturado: &quot;0&quot;, cobrado: &quot;0&quot;, pendiente: &quot;0&quot;, __pickleIndex: &quot;4&quot;, exampleTags: [])" time="0.0118781">
+    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="TotalesDelListadoMensual(mes: &quot;7&quot;, cantidad: &quot;0&quot;, facturado: &quot;0&quot;, cobrado: &quot;0&quot;, pendiente: &quot;0&quot;, __pickleIndex: &quot;4&quot;, exampleTags: [])" time="0.0117951">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y que se facturaron las ventas históricas
@@ -79,11 +512,11 @@ Y el total pendiente es 0
         <property name="Category" value="KAWA-53" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="VerSoloLasFacturasPendientesDeCobro" time="0.4254775">
+    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="VerSoloLasFacturasPendientesDeCobro" time="0.0170451">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,4s)
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
 Cuando consulto las facturas pendientes de cobro
 -&gt; done: PasosConsultasYReportes.Pendientes() (0,0s)
 Entonces obtengo 4 facturas
@@ -102,7 +535,7 @@ Y todas están en estado "emitida" o "parcial"
         <property name="Category" value="KAWA-53" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="FiltrarLasFacturasDeUnCliente" time="0.0220198">
+    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="FiltrarLasFacturasDeUnCliente" time="0.0208579">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y que se facturaron las ventas históricas
@@ -124,11 +557,11 @@ Y todas son del cliente "Moto Center SRL"
         <property name="Category" value="KAWA-53" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="ElListadoMensualSeOrdenaPorNumeroDeFactura" time="1.0698010">
+    <testcase classname="KawaSysWF.Tests.Features.ConsultaDeFacturasYListadoMensualFeature" name="ElListadoMensualSeOrdenaPorNumeroDeFactura" time="0.0141472">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (1,1s)
+-&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
 Cuando genero el listado mensual de 5 de 2025
 -&gt; done: PasosConsultasYReportes.ListadoMensual(5, 2025) (0,0s)
 Entonces las facturas están ordenadas por número de menor a mayor
@@ -144,363 +577,372 @@ Entonces las facturas están ordenadas por número de menor a mayor
         <property name="Category" value="KAWA-53" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="CualquierMedioDePagoQueNoSeaCuentaCorrienteCobraLaFacturaCompleta(medio: &quot;Cheque&quot;, __pickleIndex: &quot;4&quot;, exampleTags: [])" time="0.0153761">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Cuando registro una venta a consumidor final de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Cheque"
--&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Yamaha", "FZ25", 380000, "Cheque") (0,0s)
-Entonces se genera una factura en estado "cobrada"
--&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
-Y la factura tiene un cobro de 380000 con medio de pago "Cheque"
--&gt; done: PasosFacturacion.CobroUnico(380000, "Cheque") (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="UnAjusteNoPuedeDejarElStockNegativo" time="0.0068449">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando resto 3 unidades del modelo "Yamaha" "MT-03"
+-&gt; done: PasosMotos.ActualizarStock("resto", 3, "Yamaha", "MT-03") (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "no puede quedar negativo"
+-&gt; done: PasosComunes.Rechaza("no puede quedar n...") (0,0s)
+Y el modelo "Yamaha" "MT-03" tiene stock 2
+-&gt; done: PasosMotos.TieneStock("Yamaha", "MT-03", 2) (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
-        <property name="Description" value="Cualquier medio de pago que no sea cuenta corriente cobra la factura completa" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-43" />
-        <property name="Category" value="KAWA-44" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Un ajuste no puede dejar el stock negativo" />
+        <property name="Category" value="stock" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="CualquierMedioDePagoQueNoSeaCuentaCorrienteCobraLaFacturaCompleta(medio: &quot;Crédito&quot;, __pickleIndex: &quot;3&quot;, exampleTags: [])" time="0.5696065">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Cuando registro una venta a consumidor final de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Crédito"
--&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Yamaha", "FZ25", 380000, "Crédito") (0,6s)
-Entonces se genera una factura en estado "cobrada"
--&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
-Y la factura tiene un cobro de 380000 con medio de pago "Crédito"
--&gt; done: PasosFacturacion.CobroUnico(380000, "Crédito") (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="NoSePermiteRegistrarUnModeloConDatosInvalidos(marca: &quot;&quot;, modelo: &quot;RX 150&quot;, precio: &quot;200000&quot;, stock: &quot;1&quot;, mensaje: &quot;La marca y el modelo son obligatorios&quot;, __pickleIndex: &quot;2&quot;, exampleTags: [])" time="0.0047124">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando registro el modelo "" "RX 150" de 150 cc color "Negro" a 200000 con stock 1
+-&gt; done: PasosMotos.Registrar("", "RX 150", 150, "Negro", 200000, 1) (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "La marca y el modelo son obligatorios"
+-&gt; done: PasosComunes.Rechaza("La marca y el mod...") (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
-        <property name="Description" value="Cualquier medio de pago que no sea cuenta corriente cobra la factura completa" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-43" />
-        <property name="Category" value="KAWA-44" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="No se permite registrar un modelo con datos inválidos" />
+        <property name="Category" value="registrar" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="CualquierMedioDePagoQueNoSeaCuentaCorrienteCobraLaFacturaCompleta(medio: &quot;Efectivo&quot;, __pickleIndex: &quot;1&quot;, exampleTags: [])" time="0.5447478">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Cuando registro una venta a consumidor final de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Efectivo"
--&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Yamaha", "FZ25", 380000, "Efectivo") (0,5s)
-Entonces se genera una factura en estado "cobrada"
--&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
-Y la factura tiene un cobro de 380000 con medio de pago "Efectivo"
--&gt; done: PasosFacturacion.CobroUnico(380000, "Efectivo") (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="NoSePermiteRegistrarUnModeloConDatosInvalidos(marca: &quot;Zanella&quot;, modelo: &quot;RX 150&quot;, precio: &quot;0&quot;, stock: &quot;1&quot;, mensaje: &quot;El precio debe ser mayor a cero&quot;, __pickleIndex: &quot;4&quot;, exampleTags: [])" time="0.0031868">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando registro el modelo "Zanella" "RX 150" de 150 cc color "Negro" a 0 con stock 1
+-&gt; done: PasosMotos.Registrar("Zanella", "RX 150", 150, "Negro", 0, 1) (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "El precio debe ser mayor a cero"
+-&gt; done: PasosComunes.Rechaza("El precio debe se...") (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
-        <property name="Description" value="Cualquier medio de pago que no sea cuenta corriente cobra la factura completa" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-43" />
-        <property name="Category" value="KAWA-44" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="No se permite registrar un modelo con datos inválidos" />
+        <property name="Category" value="registrar" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="CualquierMedioDePagoQueNoSeaCuentaCorrienteCobraLaFacturaCompleta(medio: &quot;Transferencia&quot;, __pickleIndex: &quot;2&quot;, exampleTags: [])" time="0.5675903">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Cuando registro una venta a consumidor final de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Transferencia"
--&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Yamaha", "FZ25", 380000, "Transferencia") (0,6s)
-Entonces se genera una factura en estado "cobrada"
--&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
-Y la factura tiene un cobro de 380000 con medio de pago "Transferencia"
--&gt; done: PasosFacturacion.CobroUnico(380000, "Transferencia") (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="NoSePermiteRegistrarUnModeloConDatosInvalidos(marca: &quot;Zanella&quot;, modelo: &quot;&quot;, precio: &quot;200000&quot;, stock: &quot;1&quot;, mensaje: &quot;La marca y el modelo son obligatorios&quot;, __pickleIndex: &quot;3&quot;, exampleTags: [])" time="0.0026037">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando registro el modelo "Zanella" "" de 150 cc color "Negro" a 200000 con stock 1
+-&gt; done: PasosMotos.Registrar("Zanella", "", 150, "Negro", 200000, 1) (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "La marca y el modelo son obligatorios"
+-&gt; done: PasosComunes.Rechaza("La marca y el mod...") (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
-        <property name="Description" value="Cualquier medio de pago que no sea cuenta corriente cobra la factura completa" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-43" />
-        <property name="Category" value="KAWA-44" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="No se permite registrar un modelo con datos inválidos" />
+        <property name="Category" value="registrar" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="FacturarLasVentasHistoricasQueTodaviaNoTienenFactura" time="0.0134105">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Dado que la cuenta corriente de "Moto Center" tiene saldo -45000
--&gt; done: PasosComunes.SaldoCuentaCorriente("Moto Center", -45000) (0,0s)
-Cuando facturo las ventas pendientes de facturar
--&gt; done: PasosFacturacion.FacturarPendientes() (0,0s)
-Entonces se generan 15 facturas
--&gt; done: PasosFacturacion.FacturasGeneradas(15) (0,0s)
-Y no queda ninguna venta sin factura
--&gt; done: PasosFacturacion.TodasFacturadas() (0,0s)
-Y el saldo de la cuenta corriente de "Moto Center" es -45000
--&gt; done: PasosComunes.SaldoCuentaCorriente("Moto Center", -45000) (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="NoSePermiteRegistrarUnModeloConDatosInvalidos(marca: &quot;Zanella&quot;, modelo: &quot;RX 150&quot;, precio: &quot;200000&quot;, stock: &quot;-1&quot;, mensaje: &quot;El stock no puede ser negativo&quot;, __pickleIndex: &quot;5&quot;, exampleTags: [])" time="0.0024455">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando registro el modelo "Zanella" "RX 150" de 150 cc color "Negro" a 200000 con stock -1
+-&gt; done: PasosMotos.Registrar("Zanella", "RX 150", 150, "Negro", 200000, -1) (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "El stock no puede ser negativo"
+-&gt; done: PasosComunes.Rechaza("El stock no puede...") (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
-        <property name="Description" value="Facturar las ventas históricas que todavía no tienen factura" />
-        <property name="Category" value="KAWA-46" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-43" />
-        <property name="Category" value="KAWA-44" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="No se permite registrar un modelo con datos inválidos" />
+        <property name="Category" value="registrar" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="VentaEnCuentaCorrienteQuedaPendienteDeCobroYDebitaLaCuentaDelCliente" time="0.5135435">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Dado que la cuenta corriente de "Moto Center" tiene saldo -45000
--&gt; done: PasosComunes.SaldoCuentaCorriente("Moto Center", -45000) (0,0s)
-Cuando registro una venta al cliente "Moto Center" de 1 "Yamaha" "FZ25" a 380000 cada una con forma de pago "Cuenta corriente"
--&gt; done: PasosFacturacion.VentaCliente("Moto Center", 1, "Yamaha", "FZ25", 380000, "Cuenta corriente") (0,5s)
-Entonces se genera una factura en estado "emitida"
--&gt; done: PasosFacturacion.EstadoFactura("emitida") (0,0s)
-Y la factura no tiene cobros registrados
--&gt; done: PasosFacturacion.SinCobros() (0,0s)
-Y el saldo pendiente de la factura es 380000
--&gt; done: PasosFacturacion.PendienteFactura(380000) (0,0s)
-Y el saldo de la cuenta corriente de "Moto Center" es -425000
--&gt; done: PasosComunes.SaldoCuentaCorriente("Moto Center", -425000) (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="NoSePermiteRegistrarUnModeloQueYaExiste" time="0.0031326">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando registro el modelo "honda" "xr150" de 150 cc color "Rojo" a 285000 con stock 1
+-&gt; done: PasosMotos.Registrar("honda", "xr150", 150, "Rojo", 285000, 1) (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "Ya existe un modelo activo"
+-&gt; done: PasosComunes.Rechaza("Ya existe un mode...") (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
-        <property name="Description" value="Venta en cuenta corriente queda pendiente de cobro y debita la cuenta del cliente" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="No se permite registrar un modelo que ya existe" />
+        <property name="Category" value="registrar" />
+        <property name="Category" value="motos" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="ConsultarModelosPorMarcaOModelo(texto: &quot;Ducati&quot;, cantidad: &quot;0&quot;, __pickleIndex: &quot;15&quot;, exampleTags: [])" time="0.0045427">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando busco modelos con el texto "Ducati"
+-&gt; done: PasosMotos.Buscar("Ducati") (0,0s)
+Entonces obtengo 0 modelos
+-&gt; done: PasosMotos.CantidadModelos(0) (0,0s)
+Y todos los modelos encontrados contienen "Ducati"
+-&gt; done: PasosMotos.TodosContienen("Ducati") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Consultar modelos por marca o modelo" />
         <property name="Category" value="smoke" />
-        <property name="Category" value="KAWA-48" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-43" />
-        <property name="Category" value="KAWA-44" />
+        <property name="Category" value="consultar" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="ElDetalleDeLaFacturaCopiaLosDatosDeLaVenta" time="0.5421918">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Cuando registro una venta al cliente "Motos Patagonia" de 3 "Motomel" "Skua 150" a 195000 cada una con forma de pago "Transferencia"
--&gt; done: PasosFacturacion.VentaCliente("Motos Patagonia", 3, "Motomel", "Skua 150", 195000, "Transferencia") (0,5s)
-Entonces el detalle de la factura tiene 1 línea
--&gt; done: PasosFacturacion.LineasDetalle(1) (0,0s)
-Y la línea de la factura es 3 x "Motomel Skua 150" a 195000 con subtotal 585000
--&gt; done: PasosFacturacion.LineaDetalle(3, "Motomel Skua 150", 195000, 585000) (0,0s)
-Y la factura está a nombre de "Motos Patagonia SRL"
--&gt; done: PasosFacturacion.NombreFactura("Motos Patagonia SRL") (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="ConsultarModelosPorMarcaOModelo(texto: &quot;150&quot;, cantidad: &quot;3&quot;, __pickleIndex: &quot;13&quot;, exampleTags: [])" time="0.0031850">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando busco modelos con el texto "150"
+-&gt; done: PasosMotos.Buscar("150") (0,0s)
+Entonces obtengo 3 modelos
+-&gt; done: PasosMotos.CantidadModelos(3) (0,0s)
+Y todos los modelos encontrados contienen "150"
+-&gt; done: PasosMotos.TodosContienen("150") (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
-        <property name="Description" value="El detalle de la factura copia los datos de la venta" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-43" />
-        <property name="Category" value="KAWA-44" />
-      </properties>
-    </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="LasFacturasSeNumeranEnFormaCorrelativa" time="0.5163150">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Cuando registro una venta a consumidor final de 1 "Zanella" "ZB 110" a 165000 cada una con forma de pago "Efectivo"
--&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Zanella", "ZB 110", 165000, "Efectivo") (0,5s)
-Y registro una venta a consumidor final de 1 "Honda" "Wave 110" a 160000 cada una con forma de pago "Efectivo"
--&gt; done: PasosFacturacion.VentaConsumidorFinal(1, "Honda", "Wave 110", 160000, "Efectivo") (0,0s)
-Entonces la última factura tiene el número siguiente a la anterior
--&gt; done: PasosFacturacion.Correlativas() (0,0s)
-
-</system-out>
-      <properties>
-        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
-        <property name="Description" value="Las facturas se numeran en forma correlativa" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-43" />
-        <property name="Category" value="KAWA-44" />
-      </properties>
-    </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.GeneracionDeLaFacturaAlRegistrarUnaVentaFeature" name="VentaAlContadoGeneraUnaFacturaCobrada" time="0.5498952">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Cuando registro una venta a consumidor final de 2 "Honda" "XR150" a 285000 cada una con forma de pago "Efectivo"
--&gt; done: PasosFacturacion.VentaConsumidorFinal(2, "Honda", "XR150", 285000, "Efectivo") (0,5s)
-Entonces se genera una factura en estado "cobrada"
--&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
-Y la factura tiene un total de 570000
--&gt; done: PasosFacturacion.TotalFactura(570000) (0,0s)
-Y la factura tiene un cobro de 570000 con medio de pago "Efectivo"
--&gt; done: PasosFacturacion.CobroUnico(570000, "Efectivo") (0,0s)
-Y el saldo pendiente de la factura es 0
--&gt; done: PasosFacturacion.PendienteFactura(0) (0,0s)
-
-</system-out>
-      <properties>
-        <property name="FeatureTitle" value="Generación de la factura al registrar una venta" />
-        <property name="Description" value="Venta al contado genera una factura cobrada" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Consultar modelos por marca o modelo" />
         <property name="Category" value="smoke" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-43" />
-        <property name="Category" value="KAWA-44" />
+        <property name="Category" value="consultar" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="FacturasPorEstado" time="0.0176451">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,0s)
-Cuando consulto el reporte de facturas por estado de 2025
--&gt; done: PasosConsultasYReportes.Reporte("facturas por estado", 2025) (0,0s)
-Entonces el reporte muestra estas cantidades:
-  --- table step argument ---
-  | etiqueta | cantidad |
-  | cobrada  | 11       |
-  | emitida  | 4        |
--&gt; done: PasosConsultasYReportes.ReporteMuestraCantidades(&lt;table&gt;) (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="ConsultarModelosPorMarcaOModelo(texto: &quot;Yamaha FZ&quot;, cantidad: &quot;1&quot;, __pickleIndex: &quot;14&quot;, exampleTags: [])" time="0.0027577">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando busco modelos con el texto "Yamaha FZ"
+-&gt; done: PasosMotos.Buscar("Yamaha FZ") (0,0s)
+Entonces obtengo 1 modelos
+-&gt; done: PasosMotos.CantidadModelos(1) (0,0s)
+Y todos los modelos encontrados contienen "Yamaha FZ"
+-&gt; done: PasosMotos.TodosContienen("Yamaha FZ") (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
-        <property name="Description" value="Facturas por estado" />
-        <property name="Category" value="reportes" />
-      </properties>
-    </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="FacturadoContraCobradoPorMes" time="0.5556262">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,6s)
-Cuando consulto el reporte de facturado contra cobrado de 2025
--&gt; done: PasosConsultasYReportes.ReporteMensual(2025) (0,0s)
-Entonces el reporte mensual muestra:
-  --- table step argument ---
-  | mes | facturado | cobrado |
-  | 5   | 3845000   | 2880000 |
-  | 6   | 3060000   | 1860000 |
--&gt; done: PasosConsultasYReportes.ReporteMensualMuestra(&lt;table&gt;) (0,0s)
-Y los demás meses figuran en cero
--&gt; done: PasosConsultasYReportes.DemasMesesEnCero() (0,0s)
-
-</system-out>
-      <properties>
-        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
-        <property name="Description" value="Facturado contra cobrado por mes" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Consultar modelos por marca o modelo" />
         <property name="Category" value="smoke" />
-        <property name="Category" value="reportes" />
+        <property name="Category" value="consultar" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="UnCobroParcialSeReflejaEnLosReportes" time="0.5911805">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,6s)
-Dado la factura de la venta histórica número 15
--&gt; done: PasosFacturacion.FacturaDeVentaHistorica(15) (0,0s)
-Cuando registro un cobro de 145000 con "Cheque"
--&gt; done: PasosFacturacion.RegistrarCobro(145000, "Cheque") (0,0s)
-Y consulto el reporte de deuda por cliente de 2025
--&gt; done: PasosConsultasYReportes.Reporte("deuda por cliente", 2025) (0,0s)
-Entonces el reporte muestra, de mayor a menor:
-  --- table step argument ---
-  | etiqueta                 | valor   |
-  | Moto Center SRL          | 1020000 |
-  | Distribuidora Del Sur SA | 1000000 |
--&gt; done: PasosConsultasYReportes.ReporteMuestraValores(&lt;table&gt;) (0,0s)
-Y al consultar el reporte de facturas por estado de 2025 hay 1 factura en estado "parcial"
--&gt; done: PasosConsultasYReportes.CantidadEnEstado(2025, 1, "parcial") (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="ConsultarModelosPorMarcaOModelo(texto: &quot;yamaha&quot;, cantidad: &quot;4&quot;, __pickleIndex: &quot;12&quot;, exampleTags: [])" time="0.0027593">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando busco modelos con el texto "yamaha"
+-&gt; done: PasosMotos.Buscar("yamaha") (0,0s)
+Entonces obtengo 4 modelos
+-&gt; done: PasosMotos.CantidadModelos(4) (0,0s)
+Y todos los modelos encontrados contienen "yamaha"
+-&gt; done: PasosMotos.TodosContienen("yamaha") (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
-        <property name="Description" value="Un cobro parcial se refleja en los reportes" />
-        <property name="Category" value="reportes" />
-      </properties>
-    </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="FacturadoPorSucursal" time="0.5977843">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,6s)
-Cuando consulto el reporte de facturado por sucursal de 2025
--&gt; done: PasosConsultasYReportes.Reporte("facturado por suc...", 2025) (0,0s)
-Entonces el reporte muestra, de mayor a menor:
-  --- table step argument ---
-  | etiqueta       | valor   |
-  | Sucursal Norte | 3900000 |
-  | Sucursal Sur   | 3005000 |
--&gt; done: PasosConsultasYReportes.ReporteMuestraValores(&lt;table&gt;) (0,0s)
-
-</system-out>
-      <properties>
-        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
-        <property name="Description" value="Facturado por sucursal" />
-        <property name="Category" value="reportes" />
-      </properties>
-    </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="ExportarElReporteComoImagen" time="0.6688865">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,6s)
-Dado la factura de la venta histórica número 15
--&gt; done: PasosFacturacion.FacturaDeVentaHistorica(15) (0,0s)
-Cuando registro un cobro de 145000 con "Cheque"
--&gt; done: PasosFacturacion.RegistrarCobro(145000, "Cheque") (0,0s)
-Y exporto el reporte de 2025 como imagen "reporte_2025.png"
--&gt; done: PasosConsultasYReportes.ExportarImagen(2025, "reporte_2025.png") (0,1s)
-Entonces se genera una imagen PNG de 1200 píxeles de ancho
--&gt; done: PasosConsultasYReportes.ImagenGenerada(1200) (0,0s)
-
-</system-out>
-      <properties>
-        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
-        <property name="Description" value="Exportar el reporte como imagen" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Consultar modelos por marca o modelo" />
         <property name="Category" value="smoke" />
-        <property name="Category" value="reportes" />
+        <property name="Category" value="consultar" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="ClientesConMayorDeuda" time="0.4557165">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,5s)
-Cuando consulto el reporte de deuda por cliente de 2025
--&gt; done: PasosConsultasYReportes.Reporte("deuda por cliente", 2025) (0,0s)
-Entonces el reporte muestra, de mayor a menor:
-  --- table step argument ---
-  | etiqueta                 | valor   |
-  | Distribuidora Del Sur SA | 1145000 |
-  | Moto Center SRL          | 1020000 |
--&gt; done: PasosConsultasYReportes.ReporteMuestraValores(&lt;table&gt;) (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="ConsultarModelosPorMarcaOModelo(texto: &quot;Honda&quot;, cantidad: &quot;5&quot;, __pickleIndex: &quot;11&quot;, exampleTags: [])" time="0.0027884">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando busco modelos con el texto "Honda"
+-&gt; done: PasosMotos.Buscar("Honda") (0,0s)
+Entonces obtengo 5 modelos
+-&gt; done: PasosMotos.CantidadModelos(5) (0,0s)
+Y todos los modelos encontrados contienen "Honda"
+-&gt; done: PasosMotos.TodosContienen("Honda") (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
-        <property name="Description" value="Clientes con mayor deuda" />
-        <property name="Category" value="reportes" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Consultar modelos por marca o modelo" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="consultar" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.ReportesEstadisticosDeFacturacionYCobranzasFeature" name="CobrosPorMedioDePago" time="0.3324641">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Y que se facturaron las ventas históricas
--&gt; done: PasosComunes.FacturarHistoricas() (0,3s)
-Cuando consulto el reporte de cobros por medio de pago de 2025
--&gt; done: PasosConsultasYReportes.Reporte("cobros por medio ...", 2025) (0,0s)
-Entonces el reporte muestra, de mayor a menor:
-  --- table step argument ---
-  | etiqueta      | valor   |
-  | Transferencia | 2650000 |
-  | Efectivo      | 1115000 |
-  | Crédito       | 685000  |
-  | Cheque        | 290000  |
--&gt; done: PasosConsultasYReportes.ReporteMuestraValores(&lt;table&gt;) (0,0s)
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="NoSePuedeVenderUnModeloDadoDeBaja" time="0.0265248">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Dado que el modelo "Zanella" "Due 200" está dado de baja
+-&gt; done: PasosMotos.DarDeBaja("Zanella", "Due 200") (0,0s)
+Cuando intento vender 1 "Zanella" "Due 200" a 280000
+-&gt; done: PasosMotos.Vender(1, "Zanella", "Due 200", 280000) (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "está dado de baja"
+-&gt; done: PasosComunes.Rechaza("está dado de baja") (0,0s)
+Y siguen registradas 15 ventas
+-&gt; done: PasosMotos.VentasRegistradas(15) (0,0s)
 
 </system-out>
       <properties>
-        <property name="FeatureTitle" value="Reportes estadísticos de facturación y cobranzas" />
-        <property name="Description" value="Cobros por medio de pago" />
-        <property name="Category" value="reportes" />
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="No se puede vender un modelo dado de baja" />
+        <property name="Category" value="baja" />
+        <property name="Category" value="motos" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="CobroPorElTotalPendienteDejaLaFacturaCobrada" time="0.6746356">
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="ModificarElPrecioYElColorDeUnModelo" time="0.0128758">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando modifico el modelo "Honda" "CB190" con precio 335000 y color "Gris"
+-&gt; done: PasosMotos.ModificarPrecioYColor("Honda", "CB190", 335000, "Gris") (0,0s)
+Entonces el modelo "Honda" "CB190" tiene precio 335000 y stock 4
+-&gt; done: PasosMotos.TienePrecioYStock("Honda", "CB190", 335000, 4) (0,0s)
+Y el modelo "Honda" "CB190" es de color "Gris"
+-&gt; done: PasosMotos.EsDeColor("Honda", "CB190", "Gris") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Modificar el precio y el color de un modelo" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="modificar" />
+        <property name="Category" value="motos" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="NoSePermiteModificarUnModeloParaQueQuedeIgualAOtro" time="0.0039139">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando cambio el nombre del modelo "Honda" "CB190" a "XR150"
+-&gt; done: PasosMotos.CambiarModelo("Honda", "CB190", "XR150") (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "Ya existe un modelo activo"
+-&gt; done: PasosComunes.Rechaza("Ya existe un mode...") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="No se permite modificar un modelo para que quede igual a otro" />
+        <property name="Category" value="modificar" />
+        <property name="Category" value="motos" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="RegistrarUnModeloNuevo" time="0.0198701">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando registro el modelo "Kawasaki" "Z400" de 400 cc color "Verde" a 1200000 con stock 3
+-&gt; done: PasosMotos.Registrar("Kawasaki", "Z400", 400, "Verde", 1200000, 3) (0,0s)
+Entonces el modelo "Kawasaki" "Z400" figura en el catálogo como activo
+-&gt; done: PasosMotos.FiguraComo("Kawasaki", "Z400", "activo") (0,0s)
+Y el modelo "Kawasaki" "Z400" tiene precio 1200000 y stock 3
+-&gt; done: PasosMotos.TienePrecioYStock("Kawasaki", "Z400", 1200000, 3) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Registrar un modelo nuevo" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="registrar" />
+        <property name="Category" value="motos" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="ReactivarUnModeloDadoDeBaja" time="0.0248969">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Dado que el modelo "Zanella" "Due 200" está dado de baja
+-&gt; done: PasosMotos.DarDeBaja("Zanella", "Due 200") (0,0s)
+Cuando reactivo el modelo "Zanella" "Due 200"
+-&gt; done: PasosMotos.Reactivar("Zanella", "Due 200") (0,0s)
+Entonces el modelo "Zanella" "Due 200" figura en el catálogo como activo
+-&gt; done: PasosMotos.FiguraComo("Zanella", "Due 200", "activo") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Reactivar un modelo dado de baja" />
+        <property name="Category" value="baja" />
+        <property name="Category" value="motos" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="DarDeBajaUnModeloLoSacaDelCatalogoActivoPeroLoConserva" time="0.0133637">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando doy de baja el modelo "Zanella" "Due 200"
+-&gt; done: PasosMotos.DarDeBaja("Zanella", "Due 200") (0,0s)
+Entonces el modelo "Zanella" "Due 200" no figura entre los modelos activos
+-&gt; done: PasosMotos.NoFiguraEntreActivos("Zanella", "Due 200") (0,0s)
+Y el modelo "Zanella" "Due 200" figura en el catálogo como dado de baja
+-&gt; done: PasosMotos.FiguraComo("Zanella", "Due 200", "dado de baja") (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Dar de baja un modelo lo saca del catálogo activo pero lo conserva" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="baja" />
+        <property name="Category" value="motos" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="NoSePuedeVenderMasUnidadesQueElStockDisponible" time="0.0052409">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando intento vender 3 "Yamaha" "MT-03" a 890000
+-&gt; done: PasosMotos.Vender(3, "Yamaha", "MT-03", 890000) (0,0s)
+Entonces el sistema rechaza la operación con el mensaje "Stock insuficiente"
+-&gt; done: PasosComunes.Rechaza("Stock insuficiente") (0,0s)
+Y el modelo "Yamaha" "MT-03" tiene stock 2
+-&gt; done: PasosMotos.TieneStock("Yamaha", "MT-03", 2) (0,0s)
+Y siguen registradas 15 ventas
+-&gt; done: PasosMotos.VentasRegistradas(15) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="No se puede vender más unidades que el stock disponible" />
+        <property name="Category" value="stock" />
+        <property name="Category" value="motos" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="IngresarUnidadesSumaAlStock" time="0.0215959">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando ingreso 5 unidades del modelo "Kawasaki" "Ninja 300"
+-&gt; done: PasosMotos.ActualizarStock("ingreso", 5, "Kawasaki", "Ninja 300") (0,0s)
+Entonces el modelo "Kawasaki" "Ninja 300" tiene stock 5
+-&gt; done: PasosMotos.TieneStock("Kawasaki", "Ninja 300", 5) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Ingresar unidades suma al stock" />
+        <property name="Category" value="stock" />
+        <property name="Category" value="motos" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.GestionDeModelosDeMotosFeature" name="RegistrarUnaVentaDescuentaElStockDelModelo" time="0.0124977">
+      <system-out>Dado que el catálogo tiene los modelos iniciales de KawaSys
+-&gt; done: PasosMotos.CatalogoInicial() (0,0s)
+Cuando intento vender 2 "Honda" "XR150" a 285000
+-&gt; done: PasosMotos.Vender(2, "Honda", "XR150", 285000) (0,0s)
+Entonces la operación se realiza sin errores
+-&gt; done: PasosComunes.SinErrores() (0,0s)
+Y el modelo "Honda" "XR150" tiene stock 6
+-&gt; done: PasosMotos.TieneStock("Honda", "XR150", 6) (0,0s)
+
+</system-out>
+      <properties>
+        <property name="FeatureTitle" value="Gestión de modelos de motos" />
+        <property name="Description" value="Registrar una venta descuenta el stock del modelo" />
+        <property name="Category" value="smoke" />
+        <property name="Category" value="stock" />
+        <property name="Category" value="motos" />
+      </properties>
+    </testcase>
+    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="CobroPorElTotalPendienteDejaLaFacturaCobrada" time="0.0278000">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y una factura en cuenta corriente de "Distribuidora Del Sur" por 600000
--&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,3s)
+-&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,0s)
 Cuando registro un cobro de 600000 con "Cheque"
--&gt; done: PasosFacturacion.RegistrarCobro(600000, "Cheque") (0,4s)
+-&gt; done: PasosFacturacion.RegistrarCobro(600000, "Cheque") (0,0s)
 Entonces la factura queda en estado "cobrada"
 -&gt; done: PasosFacturacion.EstadoFactura("cobrada") (0,0s)
 Y el saldo pendiente de la factura es 0
@@ -518,11 +960,11 @@ Y el saldo de la cuenta corriente de "Distribuidora Del Sur" es 12500
         <property name="Category" value="KAWA-48" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="ElMontoDelCobroTieneQueSerMayorACero(monto: &quot;-1000&quot;, __pickleIndex: &quot;5&quot;, exampleTags: [])" time="0.4696539">
+    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="ElMontoDelCobroTieneQueSerMayorACero(monto: &quot;-1000&quot;, __pickleIndex: &quot;5&quot;, exampleTags: [])" time="0.0119074">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y una factura en cuenta corriente de "Distribuidora Del Sur" por 600000
--&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,5s)
+-&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,0s)
 Cuando registro un cobro de -1000 con "Efectivo"
 -&gt; done: PasosFacturacion.RegistrarCobro(-1000, "Efectivo") (0,0s)
 Entonces el sistema rechaza la operación con el mensaje "mayor a cero"
@@ -538,7 +980,7 @@ Entonces el sistema rechaza la operación con el mensaje "mayor a cero"
         <property name="Category" value="KAWA-48" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="ElMontoDelCobroTieneQueSerMayorACero(monto: &quot;0&quot;, __pickleIndex: &quot;4&quot;, exampleTags: [])" time="0.0110474">
+    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="ElMontoDelCobroTieneQueSerMayorACero(monto: &quot;0&quot;, __pickleIndex: &quot;4&quot;, exampleTags: [])" time="0.0108263">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y una factura en cuenta corriente de "Distribuidora Del Sur" por 600000
@@ -558,11 +1000,11 @@ Entonces el sistema rechaza la operación con el mensaje "mayor a cero"
         <property name="Category" value="KAWA-48" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="NoSePuedeCobrarUnaFacturaQueNoExiste" time="0.3120443">
+    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="NoSePuedeCobrarUnaFacturaQueNoExiste" time="0.0349639">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y una factura en cuenta corriente de "Distribuidora Del Sur" por 600000
--&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,3s)
+-&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,0s)
 Cuando registro un cobro de 100000 con "Efectivo" sobre la factura 9999
 -&gt; done: PasosFacturacion.RegistrarCobroSobre(100000, "Efectivo", 9999) (0,0s)
 Entonces el sistema rechaza la operación con el mensaje "La factura no existe"
@@ -578,11 +1020,11 @@ Entonces el sistema rechaza la operación con el mensaje "La factura no existe"
         <property name="Category" value="KAWA-48" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="SoloSeAceptanLosMediosDePagoHabilitados" time="0.2601381">
+    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="SoloSeAceptanLosMediosDePagoHabilitados" time="0.0158279">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y una factura en cuenta corriente de "Distribuidora Del Sur" por 600000
--&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,3s)
+-&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,0s)
 Cuando registro un cobro de 100000 con "Bitcoin"
 -&gt; done: PasosFacturacion.RegistrarCobro(100000, "Bitcoin") (0,0s)
 Entonces el sistema rechaza la operación con el mensaje "Medio de pago inválido"
@@ -598,11 +1040,11 @@ Entonces el sistema rechaza la operación con el mensaje "Medio de pago inválid
         <property name="Category" value="KAWA-48" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="VariosCobrosParcialesCompletanLaFactura" time="0.2860047">
+    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="VariosCobrosParcialesCompletanLaFactura" time="0.0371924">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y una factura en cuenta corriente de "Distribuidora Del Sur" por 600000
--&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,2s)
+-&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,0s)
 Cuando registro un cobro de 250000 con "Efectivo"
 -&gt; done: PasosFacturacion.RegistrarCobro(250000, "Efectivo") (0,0s)
 Y registro un cobro de 350000 con "Transferencia"
@@ -621,13 +1063,13 @@ Y la factura tiene 2 cobros registrados
         <property name="Category" value="KAWA-48" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="CobroParcialDejaLaFacturaEnEstadoParcial" time="0.5300535">
+    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="CobroParcialDejaLaFacturaEnEstadoParcial" time="0.0261318">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y una factura en cuenta corriente de "Distribuidora Del Sur" por 600000
--&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,3s)
+-&gt; done: PasosFacturacion.FacturaEnCuentaCorriente("Distribuidora Del...", 600000) (0,0s)
 Cuando registro un cobro de 200000 con "Transferencia"
--&gt; done: PasosFacturacion.RegistrarCobro(200000, "Transferencia") (0,2s)
+-&gt; done: PasosFacturacion.RegistrarCobro(200000, "Transferencia") (0,0s)
 Entonces la factura queda en estado "parcial"
 -&gt; done: PasosFacturacion.EstadoFactura("parcial") (0,0s)
 Y el saldo pendiente de la factura es 400000
@@ -645,7 +1087,7 @@ Y el saldo de la cuenta corriente de "Distribuidora Del Sur" es -387500
         <property name="Category" value="KAWA-48" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="NoSePuedeCobrarMasQueElSaldoPendiente" time="0.0113203">
+    <testcase classname="KawaSysWF.Tests.Features.RegistroDeCobrosSobreFacturasPendientesFeature" name="NoSePuedeCobrarMasQueElSaldoPendiente" time="0.0122787">
       <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
 -&gt; done: PasosComunes.DatosIniciales() (0,0s)
 Y una factura en cuenta corriente de "Distribuidora Del Sur" por 600000
@@ -669,99 +1111,16 @@ Y la factura no tiene cobros registrados
         <property name="Category" value="KAWA-48" />
       </properties>
     </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.UnaVentaFacturadaNoSeModificaNiSeEliminaFeature" name="IntentarModificarUnaVentaFacturada" time="0.2841108">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Dado una venta facturada de 1 "Honda" "CB190" a 320000
--&gt; done: PasosFacturacion.VentaFacturada(1, "Honda", "CB190", 320000) (0,3s)
-Cuando intento cambiar la cantidad de la venta a 5
--&gt; done: PasosFacturacion.CambiarCantidad(5) (0,0s)
-Entonces el sistema rechaza la operación con el mensaje "ya tiene emitida la factura"
--&gt; done: PasosComunes.Rechaza("ya tiene emitida ...") (0,0s)
-Y la venta sigue teniendo cantidad 1 y total 320000
--&gt; done: PasosFacturacion.VentaSinCambios(1, 320000) (0,0s)
-
-</system-out>
-      <properties>
-        <property name="FeatureTitle" value="Una venta facturada no se modifica ni se elimina" />
-        <property name="Description" value="Intentar modificar una venta facturada" />
-        <property name="Category" value="negativo" />
-        <property name="Category" value="smoke" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-51" />
-      </properties>
-    </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.UnaVentaFacturadaNoSeModificaNiSeEliminaFeature" name="IntentarEliminarUnaVentaFacturada" time="0.2613255">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Dado una venta facturada de 1 "Honda" "CB190" a 320000
--&gt; done: PasosFacturacion.VentaFacturada(1, "Honda", "CB190", 320000) (0,3s)
-Cuando intento eliminar la venta
--&gt; done: PasosFacturacion.EliminarVenta() (0,0s)
-Entonces el sistema rechaza la operación con el mensaje "ya tiene emitida la factura"
--&gt; done: PasosComunes.Rechaza("ya tiene emitida ...") (0,0s)
-Y la venta sigue existiendo
--&gt; done: PasosFacturacion.VentaExiste() (0,0s)
-
-</system-out>
-      <properties>
-        <property name="FeatureTitle" value="Una venta facturada no se modifica ni se elimina" />
-        <property name="Description" value="Intentar eliminar una venta facturada" />
-        <property name="Category" value="negativo" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-51" />
-      </properties>
-    </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.UnaVentaFacturadaNoSeModificaNiSeEliminaFeature" name="UnaVentaHistoricaSinFacturaTodaviaSePuedeModificar" time="0.2666312">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Dado la venta histórica número 2, que no tiene factura
--&gt; done: PasosFacturacion.VentaSinFactura(2) (0,0s)
-Cuando intento cambiar la cantidad de la venta a 2
--&gt; done: PasosFacturacion.CambiarCantidad(2) (0,3s)
-Entonces la operación se realiza sin errores
--&gt; done: PasosComunes.SinErrores() (0,0s)
-Y la venta sigue teniendo cantidad 2 y total 440000
--&gt; done: PasosFacturacion.VentaSinCambios(2, 440000) (0,0s)
-
-</system-out>
-      <properties>
-        <property name="FeatureTitle" value="Una venta facturada no se modifica ni se elimina" />
-        <property name="Description" value="Una venta histórica sin factura todavía se puede modificar" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-51" />
-      </properties>
-    </testcase>
-    <testcase classname="KawaSysWF.Tests.Features.UnaVentaFacturadaNoSeModificaNiSeEliminaFeature" name="UnaVentaHistoricaSinFacturaTodaviaSePuedeEliminar" time="0.0200456">
-      <system-out>Dado que el sistema tiene los datos iniciales de KawaSys
--&gt; done: PasosComunes.DatosIniciales() (0,0s)
-Dado la venta histórica número 2, que no tiene factura
--&gt; done: PasosFacturacion.VentaSinFactura(2) (0,0s)
-Cuando intento eliminar la venta
--&gt; done: PasosFacturacion.EliminarVenta() (0,0s)
-Entonces la operación se realiza sin errores
--&gt; done: PasosComunes.SinErrores() (0,0s)
-Y la venta ya no existe
--&gt; done: PasosFacturacion.VentaNoExiste() (0,0s)
-
-</system-out>
-      <properties>
-        <property name="FeatureTitle" value="Una venta facturada no se modifica ni se elimina" />
-        <property name="Description" value="Una venta histórica sin factura todavía se puede eliminar" />
-        <property name="Category" value="facturacion" />
-        <property name="Category" value="KAWA-51" />
-      </properties>
-    </testcase>
     <system-out>
 Test Framework Informational Messages:
 [xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v4.0.1+0f7d528729 (64-bit .NET 9.0.8)
 [xUnit.net 00:00:00.07]   Discovering: KawaSysWF.Tests
-[xUnit.net 00:00:00.11]   Discovered:  KawaSysWF.Tests
-[xUnit.net 00:00:00.14]   Starting:    KawaSysWF.Tests
+[xUnit.net 00:00:00.13]   Discovered:  KawaSysWF.Tests
+[xUnit.net 00:00:00.16]   Starting:    KawaSysWF.Tests
 -&gt; Loading plugin C:\Users\Usuario\KawaSysWF\KawaSysWF.Tests\bin\Debug\net9.0-windows\KawaSysWF.Tests.dll
 -&gt; Loading plugin C:\Users\Usuario\KawaSysWF\KawaSysWF.Tests\bin\Debug\net9.0-windows\Reqnroll.xUnit.ReqnrollPlugin.dll
 -&gt; Using reqnroll.json
-[xUnit.net 00:00:19.07]   Finished:    KawaSysWF.Tests
+[xUnit.net 00:00:03.16]   Finished:    KawaSysWF.Tests
 </system-out>
   </testsuite>
 </testsuites>

@@ -204,7 +204,7 @@ namespace KawaSysWF.Forms.Ventas
             Controls.Add(new Label { Text = "Cantidad *", Left = 16, Top = y, AutoSize = true, Font = AppTheme.FontBold });
             Controls.Add(new Label { Text = "Precio unitario *", Left = 126, Top = y, AutoSize = true, Font = AppTheme.FontBold });
             y += 20;
-            nudCantidad = new NumericUpDown { Left = 16, Top = y, Width = 100, Minimum = 1, Maximum = 999, Value = _v.Cantidad, Font = AppTheme.FontNormal };
+            nudCantidad = new NumericUpDown { Left = 16, Top = y, Width = 100, Minimum = 1, Maximum = 999, Value = Math.Clamp(_v.Cantidad, 1, 999), Font = AppTheme.FontNormal };
             nudCantidad.ValueChanged += (s, e) => UpdateTotal();
             Controls.Add(nudCantidad);
             txtPrecio = AppTheme.MakeTextBox(170); txtPrecio.Left = 126; txtPrecio.Top = y; txtPrecio.Text = _v.PrecioUnitario.ToString("0.##");

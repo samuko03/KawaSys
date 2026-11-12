@@ -153,9 +153,17 @@ namespace KawaSysWF.Forms.Facturacion
 
         private static void AbrirRecibo(int cobroId, int facturaId)
         {
-            var cobro = FacturacionRepository.Cobros(facturaId).First(c => c.Id == cobroId);
-            var factura = FacturacionRepository.Obtener(facturaId)!;
-            Comprobantes.AbrirRecibo(cobro, factura);
+            try
+            {
+                var cobro = FacturacionRepository.Cobros(facturaId).First(c => c.Id == cobroId);
+                var factura = FacturacionRepository.Obtener(facturaId)
+                    ?? throw new InvalidOperationException("La factura del cobro no existe.");
+                Comprobantes.AbrirRecibo(cobro, factura);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("El cobro está registrado, pero no se pudo emitir el recibo: " + ex.Message, "Recibo no emitido", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
         }
     }
 }

@@ -31,6 +31,7 @@ namespace KawaSysWF.Forms.Compras
             cmbCot.SelectedIndexChanged += (s, e) => {
                 if (cmbCot.SelectedItem is Cotizacion c) lblMonto.Text = $"Monto: {c.MontoTotal:C2}";
             };
+            if (cmbCot.SelectedItem is Cotizacion primera) lblMonto.Text = $"Monto: {primera.MontoTotal:C2}";   // la que ya está elegida
 
             left.Controls.Add(new Label { Text = "Cotización *", Left = 0, Top = y, AutoSize = true, Font = AppTheme.FontBold }); y += 20;
             cmbCot.Left = 0; cmbCot.Top = y; cmbCot.Width = 290; left.Controls.Add(cmbCot); y += 36;
@@ -50,8 +51,9 @@ namespace KawaSysWF.Forms.Compras
                 MessageBox.Show("✅  Orden generada y enviada a Finanzas.", "KawaSys", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 cmbCot.Items.Clear();
                 foreach (var cot in Repository.GetCotizaciones()) if (!cot.Seleccionada) cmbCot.Items.Add(cot);
+                lblMonto.Text = "Monto: $0,00";
                 if (cmbCot.Items.Count > 0) cmbCot.SelectedIndex = 0;
-                lblMonto.Text = "Monto: $0,00"; txtObs.Clear(); LoadGrid();
+                txtObs.Clear(); LoadGrid();
             };
             left.Controls.Add(btn);
 

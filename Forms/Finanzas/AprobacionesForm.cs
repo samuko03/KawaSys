@@ -48,6 +48,8 @@ namespace KawaSysWF.Forms.Finanzas
         private void Resolver(string resultado)
         {
             if (GetSel() is not Operacion op) { MessageBox.Show("Seleccioná una operación.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information); return; }
+            if (resultado == "aprobada" && MessageBox.Show($"¿Aprobar la operación \"{op.Descripcion}\" por {op.Monto:C2}?", "Confirmar",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
             string justif = "";
             if (resultado == "rechazada")
             {
@@ -101,7 +103,10 @@ namespace KawaSysWF.Forms.Finanzas
                 form.Controls.Add(new Label { Text = "Justificación:", Left = 200, Top = 12, AutoSize = true, Font = AppTheme.FontBold });
                 txtJ.Left = 200; txtJ.Top = 32; form.Controls.Add(txtJ);
                 var btn2 = AppTheme.MakeButton("Guardar", AppTheme.Accent, 100, 30); btn2.Left = 10; btn2.Top = 110;
-                btn2.Click += (s2, e2) => { Repository.ResolverOperacion(op.Id, cmbRes.SelectedItem?.ToString() ?? "aprobada", txtJ.Text.Trim()); form.Close(); LoadGrid(); };
+                btn2.Click += (s2, e2) => {
+                    if (cmbRes.SelectedItem?.ToString() == "rechazada" && string.IsNullOrWhiteSpace(txtJ.Text))
+                    { MessageBox.Show("Para rechazar una operación ingresá la justificación.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                    Repository.ResolverOperacion(op.Id, cmbRes.SelectedItem?.ToString() ?? "aprobada", txtJ.Text.Trim()); form.Close(); LoadGrid(); };
                 form.Controls.Add(btn2); form.ShowDialog();
             };
             toolbar.Controls.Add(btnMod);
