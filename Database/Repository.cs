@@ -431,21 +431,23 @@ namespace KawaSysWF.Database
         }
 
         // ── PROVEEDORES ───────────────────────────────────────────
-        public static List<Proveedor> GetProveedores(string? tipo = null, string? marca = null, string? modelo = null)
+        /// <param name="incluirInactivos">true en la lista de Proveedores, para que los dados de baja se sigan viendo (y se puedan reactivar).</param>
+        public static List<Proveedor> GetProveedores(string? tipo = null, string? marca = null, string? modelo = null, bool incluirInactivos = false)
         {
             var list = new List<Proveedor>();
             using var conn = DBHelper.GetConnection();
             var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT id,razon_social,COALESCE(cuit,''),tipo,COALESCE(telefono,''),COALESCE(email,''),COALESCE(direccion,''),COALESCE(marcas,''),COALESCE(modelos,'') FROM proveedores WHERE activo=1";
+            cmd.CommandText = "SELECT id,razon_social,COALESCE(cuit,''),tipo,COALESCE(telefono,''),COALESCE(email,''),COALESCE(direccion,''),COALESCE(marcas,''),COALESCE(modelos,''),COALESCE(activo,1) FROM proveedores WHERE " +
+                (incluirInactivos ? "1=1" : "activo=1");
             if (tipo != null) { cmd.CommandText += " AND tipo=@t"; cmd.Parameters.AddWithValue("@t", tipo); }
             if (marca != null) { cmd.CommandText += " AND marcas LIKE @m"; cmd.Parameters.AddWithValue("@m", $"%{marca}%"); }
             if (modelo != null) { cmd.CommandText += " AND modelos LIKE @mo"; cmd.Parameters.AddWithValue("@mo", $"%{modelo}%"); }
-            cmd.CommandText += " ORDER BY razon_social";
+            cmd.CommandText += " ORDER BY activo DESC, razon_social";
             using var r = cmd.ExecuteReader();
             while (r.Read())
                 list.Add(new Proveedor { Id=r.GetInt32(0), RazonSocial=r.GetString(1), Cuit=r.GetString(2),
                     Tipo=r.GetString(3), Telefono=r.GetString(4), Email=r.GetString(5),
-                    Direccion=r.GetString(6), Marcas=r.GetString(7), Modelos=r.GetString(8) });
+                    Direccion=r.GetString(6), Marcas=r.GetString(7), Modelos=r.GetString(8), Activo=r.GetInt32(9)==1 });
             return list;
         }
 
@@ -457,8 +459,9 @@ namespace KawaSysWF.Database
                 cmd.CommandText = "INSERT INTO proveedores(razon_social,cuit,tipo,telefono,email,direccion,marcas,modelos) VALUES(@rs,@c,@t,@te,@e,@d,@ma,@mo)";
             else
             {
-                cmd.CommandText = "UPDATE proveedores SET razon_social=@rs,cuit=@c,tipo=@t,telefono=@te,email=@e,direccion=@d,marcas=@ma,modelos=@mo WHERE id=@id";
+                cmd.CommandText = "UPDATE proveedores SET razon_social=@rs,cuit=@c,tipo=@t,telefono=@te,email=@e,direccion=@d,marcas=@ma,modelos=@mo,activo=@a WHERE id=@id";
                 cmd.Parameters.AddWithValue("@id", p.Id);
+                cmd.Parameters.AddWithValue("@a", p.Activo ? 1 : 0);
             }
             cmd.Parameters.AddWithValue("@rs", p.RazonSocial);
             cmd.Parameters.AddWithValue("@c", p.Cuit);

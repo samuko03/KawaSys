@@ -43,11 +43,21 @@ namespace KawaSysWF.Forms.Motos
             btnBaja.Click += (s, e) =>
             {
                 if (Seleccionada() is not Moto m) return;
-                if (!m.Activa) { MessageBox.Show($"{m.Descripcion} ya está dado de baja. Podés reactivarlo desde Modificar.", "Info"); return; }
-                if (MessageBox.Show($"¿Dar de baja el modelo {m.Descripcion}?\nDejará de ofrecerse en las ventas, pero se conserva en el historial.",
+                if (!m.Activa)
+                {
+                    // Un modelo dado de baja se puede volver a ofrecer en las ventas.
+                    if (MessageBox.Show($"¿Reactivar el modelo {m.Descripcion}?\nVolverá a ofrecerse en las ventas.",
+                            "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes) return;
+                    m.Activa = true;
+                    try { MotosRepository.Modificar(m); }
+                    catch (InvalidOperationException ex) { MessageBox.Show(ex.Message, "No se puede reactivar", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
+                    LoadGrid(m.Id);
+                    return;
+                }
+                if (MessageBox.Show($"¿Dar de baja el modelo {m.Descripcion}?\nNo se elimina: sigue en la lista como \"Dado de baja\" y se conserva en el historial, pero deja de ofrecerse en las ventas.",
                         "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) return;
                 MotosRepository.DarDeBaja(m.Id);
-                LoadGrid();
+                LoadGrid(m.Id);
             };
             btnStock.Click += (s, e) => { if (Seleccionada() is Moto m) { new StockForm(m).ShowDialog(); LoadGrid(); } };
 
@@ -55,7 +65,7 @@ namespace KawaSysWF.Forms.Motos
             txtBuscar = AppTheme.MakeTextBox(180);
             txtBuscar.Margin = new Padding(0, 2, 8, 0);
             txtBuscar.TextChanged += (s, e) => LoadGrid();
-            chkInactivas = new CheckBox { Text = "Mostrar dados de baja", AutoSize = true, Font = AppTheme.FontNormal, Margin = new Padding(4, 7, 0, 0) };
+            chkInactivas = new CheckBox { Text = "Mostrar dados de baja", Checked = true, AutoSize = true, Font = AppTheme.FontNormal, Margin = new Padding(4, 7, 0, 0) };
             chkInactivas.CheckedChanged += (s, e) => LoadGrid();
 
             var flow = new FlowLayoutPanel { Dock = DockStyle.Fill, WrapContents = false };
@@ -74,7 +84,14 @@ namespace KawaSysWF.Forms.Motos
             grid.Columns["Stock"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grid.CellDoubleClick += (s, e) =>
             {
-                if (e.RowIndex >= 0 && grid.Rows[e.RowIndex].Tag is Moto m) { new MotoEditForm(m).ShowDialog(); LoadGrid(); }
+                if (e.RowIndex >= 0 && grid.Rows[e.RowIndex].Tag is Moto m) { new MotoEditForm(m).ShowDialog(); LoadGrid(m.Id); }
+            };
+            // El botón cambia según el modelo elegido: "Dar de baja" si está activo, "Reactivar" si ya está dado de baja.
+            grid.SelectionChanged += (s, e) =>
+            {
+                bool inactiva = grid.SelectedRows.Count > 0 && grid.SelectedRows[0].Tag is Moto { Activa: false };
+                btnBaja.Text = inactiva ? "♻  Reactivar" : "🗑  Dar de baja";
+                btnBaja.BackColor = inactiva ? AppTheme.Success : Color.FromArgb(220, 38, 38);
             };
 
             Controls.Add(grid);
@@ -82,7 +99,8 @@ namespace KawaSysWF.Forms.Motos
             LoadGrid();
         }
 
-        private void LoadGrid()
+        /// <summary>Recarga la lista y, si se indica, deja seleccionado ese modelo (por ejemplo el que se acaba de dar de baja).</summary>
+        private void LoadGrid(int? seleccionar = null)
         {
             grid.Rows.Clear();
             foreach (var m in MotosRepository.Buscar(txtBuscar.Text, soloActivas: !chkInactivas.Checked))
@@ -90,9 +108,17 @@ namespace KawaSysWF.Forms.Motos
                 int i = grid.Rows.Add(m.Marca, m.Modelo, m.Cilindrada > 0 ? $"{m.Cilindrada} cc" : "", m.Color,
                                       m.Precio.ToString("C0"), m.Stock, m.Activa ? "Activo ✓" : "Dado de baja");
                 grid.Rows[i].Tag = m;
-                if (!m.Activa) grid.Rows[i].DefaultCellStyle.ForeColor = AppTheme.TextMuted;
+                if (!m.Activa)
+                {
+                    grid.Rows[i].DefaultCellStyle.ForeColor = AppTheme.TextMuted;
+                    grid.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(243, 244, 246);
+                    grid.Rows[i].Cells["Estado"].Style.ForeColor = Color.FromArgb(220, 38, 38);
+                }
                 else if (m.Stock == 0) grid.Rows[i].Cells["Stock"].Style.ForeColor = Color.FromArgb(220, 38, 38);
             }
+            if (seleccionar is int id)
+                foreach (DataGridViewRow r in grid.Rows)
+                    if (r.Tag is Moto mm && mm.Id == id) { grid.ClearSelection(); r.Selected = true; grid.FirstDisplayedScrollingRowIndex = r.Index; break; }
         }
     }
 

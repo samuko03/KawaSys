@@ -36,7 +36,7 @@ namespace KawaSysWF.Forms.Proveedores
                     if (MessageBox.Show($"¿Eliminar el proveedor \"{p.RazonSocial}\"?", "Confirmar", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
                     {
                         bool baja = Repository.DeleteProveedor(p.Id);
-                        if (baja) MessageBox.Show($"El proveedor \"{p.RazonSocial}\" ya tiene cotizaciones registradas, por eso no se borró: quedó dado de baja y se conserva el historial.", "Proveedor dado de baja", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        if (baja) MessageBox.Show($"El proveedor \"{p.RazonSocial}\" ya tiene cotizaciones registradas, por eso no se borró: quedó \"Dado de baja\" en la lista y se conserva el historial.\nNo aparece al registrar cotizaciones. Podés reactivarlo desde Modificar.", "Proveedor dado de baja", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadGrid();
                     }
                 }
@@ -51,7 +51,8 @@ namespace KawaSysWF.Forms.Proveedores
             grid.Columns["Id"].Visible = false; grid.Columns.Add("RS", "Razón Social");
             grid.Columns.Add("Tipo", "Tipo"); grid.Columns.Add("Marcas", "Marcas");
             grid.Columns.Add("Tel", "Teléfono"); grid.Columns.Add("Email", "Email");
-            grid.Columns["Id"].FillWeight = 35; grid.Columns["Tipo"].FillWeight = 60;
+            grid.Columns.Add("Estado", "Estado");
+            grid.Columns["Id"].FillWeight = 35; grid.Columns["Tipo"].FillWeight = 60; grid.Columns["Estado"].FillWeight = 60;
 
             grid.CellDoubleClick += (s, e) =>
             {
@@ -67,11 +68,17 @@ namespace KawaSysWF.Forms.Proveedores
         private void LoadGrid()
         {
             grid.Rows.Clear();
-            foreach (var p in Repository.GetProveedores())
+            foreach (var p in Repository.GetProveedores(incluirInactivos: true))
             {
-                int i = grid.Rows.Add($"#{p.Id}", p.RazonSocial, p.Tipo.ToUpper(), p.Marcas, p.Telefono, p.Email);
+                int i = grid.Rows.Add($"#{p.Id}", p.RazonSocial, p.Tipo.ToUpper(), p.Marcas, p.Telefono, p.Email, p.Activo ? "Activo ✓" : "Dado de baja");
                 grid.Rows[i].Tag = p;
-                if (p.Tipo == "fijo") grid.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(240, 253, 244);
+                if (!p.Activo)
+                {
+                    grid.Rows[i].DefaultCellStyle.ForeColor = AppTheme.TextMuted;
+                    grid.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(243, 244, 246);
+                    grid.Rows[i].Cells["Estado"].Style.ForeColor = Color.FromArgb(220, 38, 38);
+                }
+                else if (p.Tipo == "fijo") grid.Rows[i].DefaultCellStyle.BackColor = Color.FromArgb(240, 253, 244);
             }
         }
     }
@@ -107,13 +114,15 @@ namespace KawaSysWF.Forms.Proveedores
             Field("Dirección", txtDir);
             Field("Marcas que abastece", txtMarcas);
             Field("Modelos que abastece", txtModelos);
+            var chkActivo = new CheckBox { Text = "Proveedor activo", Checked = _p?.Activo ?? true, Left = 20, Top = y, AutoSize = true, Font = AppTheme.FontNormal };
+            if (_p != null) { Controls.Add(chkActivo); y += 30; }   // al editar se puede reactivar un proveedor dado de baja
 
             var btn = AppTheme.MakeButton("✓  Guardar", AppTheme.Accent, 130, 36);
             btn.Left = 20; btn.Top = y;
             btn.Click += (s, e) =>
             {
                 if (string.IsNullOrWhiteSpace(txtRS.Text)) { MessageBox.Show("Razón social es obligatoria.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning); return; }
-                Repository.SaveProveedor(new Proveedor { Id = _p?.Id ?? 0, RazonSocial = txtRS.Text.Trim(), Cuit = txtCuit.Text.Trim(), Tipo = cmbTipo.SelectedItem?.ToString() ?? "fijo", Telefono = txtTel.Text.Trim(), Email = txtEmail.Text.Trim(), Direccion = txtDir.Text.Trim(), Marcas = txtMarcas.Text.Trim(), Modelos = txtModelos.Text.Trim() });
+                Repository.SaveProveedor(new Proveedor { Id = _p?.Id ?? 0, RazonSocial = txtRS.Text.Trim(), Cuit = txtCuit.Text.Trim(), Tipo = cmbTipo.SelectedItem?.ToString() ?? "fijo", Telefono = txtTel.Text.Trim(), Email = txtEmail.Text.Trim(), Direccion = txtDir.Text.Trim(), Marcas = txtMarcas.Text.Trim(), Modelos = txtModelos.Text.Trim(), Activo = chkActivo.Checked });
                 Close();
             };
             Controls.Add(btn);
